@@ -17,13 +17,12 @@ import falcon
 
 from rift.api.version.resources import VersionResource
 
+
 class App(falcon.API):
     def __init__(self):
         super(App, self).__init__()
 
         version = VersionResource()
         self.add_route('/', version)
-
-
 
 application = App()

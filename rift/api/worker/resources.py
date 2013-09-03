@@ -15,6 +15,7 @@ limitations under the License.
 """
 from falcon import HTTP_200
 from rift.api.common.resource import ApiResource
+from rift.plugins import AbstractPlugin
 
 
 class AvailableActionsResource(ApiResource):
@@ -23,11 +24,20 @@ class AvailableActionsResource(ApiResource):
         super(AvailableActionsResource, self).__init__()
         self.action_plugins = action_plugins_list
 
-    def on_get(self, req, resp):
-        action_names = [action.get_name() for action in self.action_plugins]
+    def get_available_actions_dict(self, actions):
+        action_names = [action.get_name() for action in actions
+                        if issubclass(type(action), AbstractPlugin)]
+
+        # Make sure we don't return duplicates
+        action_names = list(set(action_names))
+
         body = {
             'available_actions': action_names
         }
+        return body
+
+    def on_get(self, req, resp):
+        body = self.get_available_actions_dict(self.action_plugins)
 
         resp.status = HTTP_200
         resp.body = self.format_response_body(body)

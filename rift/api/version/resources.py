@@ -20,11 +20,16 @@ from rift import version
 
 
 class VersionResource(ApiResource):
-    def on_get(self, req, resp):
+
+    def get_version_dict(self):
         body = {
             'current': version.__version_api__,
             'build': version.__version__
         }
+        return body
+
+    def on_get(self, req, resp):
+        body = self.get_version_dict()
 
         resp.status = falcon.HTTP_200
         resp.body = self.format_response_body(body)

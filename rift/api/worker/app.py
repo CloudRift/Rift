@@ -40,16 +40,18 @@ class WorkerApp(App):
         self.plugin_manager = PluginManager()
 
         plugin_types = rlist_classes('rift.plugins', self.is_plugin)
-        self.load_plugins(plugin_types)
+        self.action_plugins = self.load_plugins(plugin_types)
 
     def load_plugins(self, plugin_types):
+        plugins = []
         for plugin_type in plugin_types:
             try:
                 plugin = plugin_type()
-                self.action_plugins.append(plugin)
+                plugins.append(plugin)
             except TypeError as error:
                 print 'Could not load plugin: {type}\n * {error}'.format(
                     type=plugin_type, error=error)
+        return plugins
 
     def is_plugin(self, type):
         return issubclass(type, AbstractPlugin) and type is not AbstractPlugin

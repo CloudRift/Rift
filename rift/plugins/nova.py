@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from falcon import HTTP_200
 from rift.plugins import AbstractPlugin
 
 
@@ -21,6 +20,7 @@ class NovaSoftReboot(AbstractPlugin):
     API_HELP = """
     This plugin just requires a target and authentication.
     """
+
     def get_name(self):
         return 'nova-soft-reboot'
 

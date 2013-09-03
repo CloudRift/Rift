@@ -18,9 +18,11 @@ from rift.plugins import AbstractPlugin
 
 
 class NovaSoftReboot(AbstractPlugin):
+    API_HELP = """
+    This plugin just requires a target and authentication.
+    """
     def get_name(self):
         return 'nova-soft-reboot'
 
-    def on_get(self, req, resp):
-        resp.status = HTTP_200
-        resp.body = 'Add description about what this plugin does'
+    def on_post(self, req, resp):
+        pass

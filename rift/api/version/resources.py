@@ -15,7 +15,7 @@ limitations under the License.
 """
 import falcon
 
-from rift.api.common.resource import ApiResource
+from rift.api.common.resources import ApiResource
 from rift import version
 
 

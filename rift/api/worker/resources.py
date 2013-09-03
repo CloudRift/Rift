@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 from falcon import HTTP_200
-from rift.api.common.resource import ApiResource
+from rift.api.common.resources import ApiResource
 from rift.plugins import AbstractPlugin
 
 

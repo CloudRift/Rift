@@ -1,2 +1,4 @@
-unittest2
 nose
+coverage
+spec
+tox

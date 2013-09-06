@@ -1,7 +1,6 @@
 import uuid
 
 from rift.data.handler import get_handler
-from rift.data.model import build_job_from_dict
 
 JOB_COLLECTION = "jobs"
 

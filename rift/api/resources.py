@@ -13,20 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import falcon
-
-from rift.api.version.resources import VersionResource
-from rift.api.resources import JobsResource
+from rift.api.common.resources import ApiResource
+from rift.data.model import build_job_from_dict
 
 
-class App(falcon.API):
-    def __init__(self):
-        super(App, self).__init__()
+class JobsResource(ApiResource):
 
-        version = VersionResource()
-        jobs = JobsResource()
+    def on_post(self, req, resp, tenant_id):
+        body = self.load_body(req)
+        job = build_job_from_dict(body)
 
-        self.add_route('/', version)
-        self.add_route('/v1/{tenant_id}/jobs', jobs)
-
-application = App()
+    def on_get(self, req, resp, tenant_id):
+        pass

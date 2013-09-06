@@ -13,17 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import uuid
 import falcon
 
 from rift.api.common.resources import ApiResource
-from rift.data.model import build_job_from_dict, get_job
+from rift.data.model import build_job_from_dict, get_job, save_job
 
 
 class JobsResource(ApiResource):
 
     def on_post(self, req, resp, tenant_id):
         body = self.load_body(req)
+        body['tenant_id'] = tenant_id
+        body['job_id'] = str(uuid.uuid4())
         job = build_job_from_dict(body)
+        save_job(job)
 
     def on_get(self, req, resp, tenant_id):
         pass

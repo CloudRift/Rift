@@ -36,14 +36,16 @@ class Job(object):
 
 
 class Action(object):
-    def __init__(self, targets, action_type):
+    def __init__(self, targets, action_type, parameters):
         self.targets = targets
         self.action_type = action_type
+        self.parameters = parameters
 
     def as_dict(self):
         return {
             "targets": [target.as_dict() for target in self.targets],
-            "action_type": self.action_type
+            "action_type": self.action_type,
+            "parameters": self.parameters
         }
 
 

@@ -33,5 +33,9 @@ class AbstractPlugin():
         return ''
 
     @abstractmethod
-    def on_post(self, req, resp):
+    def execute_action(self, action):
         pass
+
+    #@abstractmethod
+    #def on_post(self, req, resp):
+    #    pass

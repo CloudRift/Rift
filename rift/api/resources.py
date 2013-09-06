@@ -28,6 +28,8 @@ class JobsResource(ApiResource):
         body['job_id'] = str(uuid.uuid4())
         job = build_job_from_dict(body)
         save_job(job)
+        resp.status = falcon.HTTP_201
+
 
     def on_get(self, req, resp, tenant_id):
         pass

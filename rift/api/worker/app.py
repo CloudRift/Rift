@@ -19,6 +19,7 @@ from pynsive import rlist_classes
 from rift.app import App
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import AvailableActionsResource
+from rift.data.model import get_job
 
 
 class WorkerApp(App):
@@ -31,10 +32,27 @@ class WorkerApp(App):
         available_actions = AvailableActionsResource(self.action_plugins)
         self.add_route('/actions', available_actions)
 
-        # Add routes for all of the plugins
-        for action in self.action_plugins:
-            route_name = '/actions/{name}'.format(name=action.get_name())
-            self.add_route(route_name, action)
+        # TODO: Add routes for all of the plugins
+        # for action in self.action_plugins:
+        #     route_name = '/actions/{name}'.format(name=action.get_name())
+        #     self.add_route(route_name, action)
+
+    def execute_job(self, job_id):
+        job = get_job(job_id)
+        if not job:
+            return
+
+        for action in job.actions:
+            plugin = self.get_action_plugin(action.action_type)
+            if plugin:
+                plugin.execute_action(action)
+            else:
+                print 'Failed to execute action: ', action.action_type
+
+    def get_action_plugin(self, name):
+        for action_plugin in self.action_plugins:
+            if action_plugin.get_name() == name:
+                return action_plugin
 
     def initialize_plugin_manager(self):
         self.plugin_manager = PluginManager()

@@ -29,8 +29,8 @@ class ServiceControl(ActionResource, AbstractPlugin):
                 'ansible',
                 'web[0]',
                 '-m', 'service',
-                '-a', '"name=apache2"',
-                '"state=stopped"'
+                '-a', '"name=apache2',
+                'state=stopped"'
             ]
         )
 

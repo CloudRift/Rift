@@ -41,3 +41,18 @@ class AvailableActionsResource(ApiResource):
 
         resp.status = HTTP_200
         resp.body = self.format_response_body(body)
+
+
+class ActionResource(ApiResource):
+
+    def __init__(self):
+        super(ActionResource, self).__init__()
+
+        self.target = None
+        self.authentication = None
+        self.parameters = None
+
+    def on_post(self, req, resp):
+        # TODO: Parse req for info.
+        pass
+

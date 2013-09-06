@@ -58,6 +58,24 @@ class MongoDB():
         document.pop("_id")
         return document
 
+    def get_documents(self, object_name, query_filter=None):
+        """
+        Retrieves multiple documents from the MongoDB database using the
+        specified collection and query filter
+        """
+        if query_filter is None:
+            query_filter = dict()
+        documents = self.database[object_name].find(query_filter)
+        #remove the mongodb _id form the document
+
+        cleaned = []
+        for doc in documents:
+            print 'job_id:', doc.get('job_id')
+            doc.pop('_id', None)
+            cleaned.append(doc)
+
+        return cleaned
+
     def update_document(self, object_name, document, query_filter=None):
         '''
         Updates an existing document that matches the query filter

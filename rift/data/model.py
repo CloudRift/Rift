@@ -109,7 +109,6 @@ def update_job(job):
         query_filter={"job_id": job.job_id}
     )
 
-
 def get_job(job_id):
     db_handler = get_handler()
     job_dict = db_handler.get_document(
@@ -118,6 +117,13 @@ def get_job(job_id):
 
     return build_job_from_dict(job_dict)
 
+def get_jobs(tenant_id):
+    db_handler = get_handler()
+    jobs_dict = db_handler.get_documents(
+        object_name=JOB_COLLECTION,
+        query_filter={"tenant_id": tenant_id})
+
+    return [build_job_from_dict(job) for job in jobs_dict]
 
 def delete_job(job_id):
     db_handler = get_handler()

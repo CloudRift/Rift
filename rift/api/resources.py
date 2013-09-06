@@ -17,7 +17,7 @@ import uuid
 import falcon
 
 from rift.api.common.resources import ApiResource
-from rift.data.model import build_job_from_dict, get_job, save_job
+from rift.data.model import (build_job_from_dict, get_job, get_jobs, save_job)
 from rift.actions import execute_job
 
 
@@ -33,7 +33,9 @@ class JobsResource(ApiResource):
         resp.status = falcon.HTTP_201
 
     def on_get(self, req, resp, tenant_id):
-        pass
+        jobs = get_jobs(tenant_id)
+        resp.body = self.format_response_body([job.as_dict() for job in jobs])
+
 
 
 class GetJobResource(ApiResource):

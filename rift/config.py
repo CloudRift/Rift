@@ -22,6 +22,7 @@ _CFG_DEFAULTS = {
     'celery': {
         'BROKER_URL': 'amqp://guest@db-01.cloudrift.com//',
         'CELERYD_CONCURRENCY': 2,
+        'CELERY_TASK_SERIALIZER': "json",
         'CELERYD_HIJACK_ROOT_LOGGER': False
 
     }

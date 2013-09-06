@@ -15,10 +15,10 @@ limitations under the License.
 """
 from multiprocessing import Process
 
+import falcon
 from pynsive.plugin.manager import PluginManager
 from pynsive import rlist_classes
 
-from rift.app import App
 from rift import task_queue
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import AvailableActionsResource
@@ -55,7 +55,8 @@ def is_plugin(plugin_type):
 
 ACTION_PLUGINS = load_plugins()
 
-class WorkerApp(App):
+
+class WorkerApp(falcon.API):
 
     def __init__(self):
         super(WorkerApp, self).__init__()

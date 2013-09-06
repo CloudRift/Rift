@@ -13,8 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import falcon
+
 from rift.api.common.resources import ApiResource
-from rift.data.model import build_job_from_dict
+from rift.data.model import build_job_from_dict, get_job
 
 
 class JobsResource(ApiResource):
@@ -25,3 +27,14 @@ class JobsResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id):
         pass
+
+
+class GetJobResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, job_id):
+        job = get_job(job_id)
+        if job:
+            resp.body = self.format_response_body(job.as_dict())
+        else:
+            resp.status = falcon.HTTP_404
+            resp.body = 'Cannot find job: {job_id}'.format(job_id=job_id)

@@ -15,74 +15,22 @@ limitations under the License.
 """
 from multiprocessing import Process
 
-import falcon
-from pynsive.plugin.manager import PluginManager
-from pynsive import rlist_classes
-
+from rift.app import App
 from rift import task_queue
-from rift.plugins import AbstractPlugin
-from rift.api.worker.resources import AvailableActionsResource
-from rift.data.model import get_job
 
 
-def get_action_plugin(action_plugins, name):
-    for action_plugin in action_plugins:
-        if action_plugin.get_name() == name:
-            return action_plugin
-
-
-def load_plugins():
-
-    plugin_manager = PluginManager()
-
-    plugin_types = rlist_classes('rift.plugins', is_plugin)
-    plugins = []
-    for plugin_type in plugin_types:
-        try:
-            plugin = plugin_type()
-            plugins.append(plugin)
-        except TypeError as error:
-            print 'Could not load plugin: {type}\n * {error}'.format(
-                type=plugin_type, error=error)
-    return plugins
-
-
-def is_plugin(plugin_type):
-    return (issubclass(
-        plugin_type, AbstractPlugin)
-        and plugin_type is not AbstractPlugin)
-
-
-ACTION_PLUGINS = load_plugins()
-
-
-class WorkerApp(falcon.API):
+class WorkerApp(App):
 
     def __init__(self):
         super(WorkerApp, self).__init__()
 
-        available_actions = AvailableActionsResource(ACTION_PLUGINS)
-        self.add_route('/actions', available_actions)
+        #available_actions = AvailableActionsResource(ACTION_PLUGINS)
+        #self.add_route('/actions', available_actions)
 
         # TODO: Add routes for all of the plugins
         # for action in self.action_plugins:
         #     route_name = '/actions/{name}'.format(name=action.get_name())
         #     self.add_route(route_name, action)
-
-
-@task_queue.celery.task
-def execute_job(job_id):
-    job = get_job(job_id)
-    if not job:
-        return
-
-    for action in job.actions:
-        plugin = get_action_plugin(ACTION_PLUGINS, action.action_type)
-
-        if plugin:
-            plugin.execute_action(action)
-        else:
-            print 'Failed to execute action: ', action.action_type
 
 
 celery_proc = Process(target=task_queue.celery.worker_main)

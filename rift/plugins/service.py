@@ -16,14 +16,10 @@ limitations under the License.
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import ActionResource
 
-
-class NovaSoftReboot(ActionResource, AbstractPlugin):
-    API_HELP = """
-    This plugin just requires a target and authentication.
-    """
+class ServiceControl(ActionResource, AbstractPlugin):
 
     def get_name(self):
-        return 'nova-soft-reboot'
+        return 'service'
 
     def on_post(self, req, resp):
-        super(NovaSoftReboot, self).on_post(req, resp)
+        super(ServiceControl, self).on_post()

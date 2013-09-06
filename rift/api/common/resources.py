@@ -14,13 +14,42 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import falcon
-from json import dumps as dict_to_str
+import json
 
 
 class ApiResource(object):
 
     def format_response_body(self, body_dict):
-        return dict_to_str(body_dict)
+        return json.dumps(body_dict)
+
+    def abort(self, status=falcon.HTTP_500, message=None):
+        """
+        Helper function for aborting an API request process. Useful for error
+        reporting and exception handling.
+        """
+        raise falcon.HTTPError(status, message)
+
+    def load_body(self, req, validator=None):
+        """
+        Helper function for loading an HTTP request body from JSON into a
+        Python dictionary
+        """
+        try:
+            raw_json = req.stream.read()
+        except Exception, ex:
+            self.abort(falcon.HTTP_500, 'Read Error')
+
+        try:
+            obj = json.loads(raw_json)
+        except ValueError, ex:
+            self.abort(falcon.HTTP_400, 'Malformed JSON')
+
+        if validator:
+            validation_result = validator.validate(obj)
+            if not validation_result[0]:
+                self.abort(falcon.HTTP_400, validation_result[1].message)
+
+        return obj
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_404

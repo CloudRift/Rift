@@ -59,9 +59,25 @@ class Target(object):
             "private_ip": self.private_ip
         }
 
+
 def build_job_from_dict(job_dict):
-    pass
+    tenant_id = job_dict["tenant_id"]
+    name = job_dict["name"]
+    actions = [
+        _build_action_from_dict(action_dict)
+        for action_dict in job_dict["actions"]]
+    job_id = job_dict["job_id"]
+
+    return Job(tenant_id=tenant_id, name=name, actions=actions, job_id=job_id)
 
 
-def build_action_from_dict(action_dict):
-    pass
+def _build_action_from_dict(action_dict):
+    targets = [
+        _build_target_from_dict(target_dict)
+        for target_dict in action_dict["targets"]]
+    action_type = action_dict["action_type"]
+    return Action(targets=targets, action_type=action_type)
+
+
+def _build_target_from_dict(target_dict):
+    return Target(**target_dict)

@@ -18,6 +18,12 @@ _CFG_DEFAULTS = {
     'mongodb': {
         'server': 'db-01.cloudrift.com:27017',
         'database': 'rift'
+    },
+    'celery': {
+        'BROKER_URL': 'amqp://guest@db-01.cloudrift.com//',
+        'CELERYD_CONCURRENCY': 2,
+        'CELERYD_HIJACK_ROOT_LOGGER': False
+
     }
 }
 

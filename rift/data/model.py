@@ -36,10 +36,10 @@ class Job(object):
 
 
 class Action(object):
-    def __init__(self, targets, action_type, parameters):
+    def __init__(self, targets, action_type, parameters=None):
         self.targets = targets
         self.action_type = action_type
-        self.parameters = parameters
+        self.parameters = parameters if parameters is not None else dict()
 
     def as_dict(self):
         return {
@@ -82,7 +82,12 @@ def _build_action_from_dict(action_dict):
         _build_target_from_dict(target_dict)
         for target_dict in action_dict["targets"]]
     action_type = action_dict["action_type"]
-    return Action(targets=targets, action_type=action_type)
+    parameters = action_dict["parameters"]
+    return Action(
+        targets=targets,
+        action_type=action_type,
+        parameters=parameters
+    )
 
 
 def _build_target_from_dict(target_dict):

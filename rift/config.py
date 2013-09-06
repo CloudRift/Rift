@@ -16,8 +16,8 @@ _CFG_DEFAULTS = {
         'log_level': 'DEBUG'
     },
     'mongodb': {
-        'server': 'localhost:27017',
-        'database': 'default'
+        'server': 'db-01.cloudrift.com:27017',
+        'database': 'rift'
     }
 }
 

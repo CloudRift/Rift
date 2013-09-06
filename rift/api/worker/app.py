@@ -13,10 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from multiprocessing import Process
+
 from pynsive.plugin.manager import PluginManager
 from pynsive import rlist_classes
 
 from rift.app import App
+from rift import task_queue
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import AvailableActionsResource
 from rift.data.model import get_job
@@ -37,6 +40,7 @@ class WorkerApp(App):
         #     route_name = '/actions/{name}'.format(name=action.get_name())
         #     self.add_route(route_name, action)
 
+    @task_queue.celery.task
     def execute_job(self, job_id):
         job = get_job(job_id)
         if not job:
@@ -75,4 +79,6 @@ class WorkerApp(App):
         return issubclass(type, AbstractPlugin) and type is not AbstractPlugin
 
 
+celery_proc = Process(target=task_queue.celery.worker_main)
+celery_proc.start()
 application = WorkerApp()

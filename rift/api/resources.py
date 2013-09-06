@@ -18,6 +18,7 @@ import falcon
 
 from rift.api.common.resources import ApiResource
 from rift.data.model import build_job_from_dict, get_job, save_job
+from rift.api.worker.app import e
 
 
 class JobsResource(ApiResource):

@@ -26,7 +26,7 @@ class WhenTestingDataModel(unittest.TestCase):
             actions=actions,
             job_id="12345"
         )
-        job_dict =  job.as_dict()
+        job_dict = job.as_dict()
 
         test_job = model.build_job_from_dict(job_dict)
         self.assertEqual(job_dict, test_job.as_dict())

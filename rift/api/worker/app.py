@@ -25,14 +25,42 @@ from rift.api.worker.resources import AvailableActionsResource
 from rift.data.model import get_job
 
 
+def get_action_plugin(action_plugins, name):
+    for action_plugin in action_plugins:
+        if action_plugin.get_name() == name:
+            return action_plugin
+
+
+def load_plugins():
+
+    plugin_manager = PluginManager()
+
+    plugin_types = rlist_classes('rift.plugins', is_plugin)
+    plugins = []
+    for plugin_type in plugin_types:
+        try:
+            plugin = plugin_type()
+            plugins.append(plugin)
+        except TypeError as error:
+            print 'Could not load plugin: {type}\n * {error}'.format(
+                type=plugin_type, error=error)
+    return plugins
+
+
+def is_plugin(plugin_type):
+    return (issubclass(
+        plugin_type, AbstractPlugin)
+        and plugin_type is not AbstractPlugin)
+
+
+ACTION_PLUGINS = load_plugins()
+
 class WorkerApp(App):
 
     def __init__(self):
         super(WorkerApp, self).__init__()
-        self.action_plugins = []
-        self.initialize_plugin_manager()
 
-        available_actions = AvailableActionsResource(self.action_plugins)
+        available_actions = AvailableActionsResource(ACTION_PLUGINS)
         self.add_route('/actions', available_actions)
 
         # TODO: Add routes for all of the plugins
@@ -40,44 +68,20 @@ class WorkerApp(App):
         #     route_name = '/actions/{name}'.format(name=action.get_name())
         #     self.add_route(route_name, action)
 
-    @task_queue.celery.task
-    def execute_job(self, job_id):
-        job = get_job(job_id)
-        if not job:
-            return
 
-        for action in job.actions:
-            plugin = self.get_action_plugin(action.action_type)
+@task_queue.celery.task
+def execute_job(job_id):
+    job = get_job(job_id)
+    if not job:
+        return
 
-            if plugin:
-                plugin.execute_action(action)
-            else:
-                print 'Failed to execute action: ', action.action_type
+    for action in job.actions:
+        plugin = get_action_plugin(ACTION_PLUGINS, action.action_type)
 
-    def get_action_plugin(self, name):
-        for action_plugin in self.action_plugins:
-            if action_plugin.get_name() == name:
-                return action_plugin
-
-    def initialize_plugin_manager(self):
-        self.plugin_manager = PluginManager()
-
-        plugin_types = rlist_classes('rift.plugins', self.is_plugin)
-        self.action_plugins = self.load_plugins(plugin_types)
-
-    def load_plugins(self, plugin_types):
-        plugins = []
-        for plugin_type in plugin_types:
-            try:
-                plugin = plugin_type()
-                plugins.append(plugin)
-            except TypeError as error:
-                print 'Could not load plugin: {type}\n * {error}'.format(
-                    type=plugin_type, error=error)
-        return plugins
-
-    def is_plugin(self, type):
-        return issubclass(type, AbstractPlugin) and type is not AbstractPlugin
+        if plugin:
+            plugin.execute_action(action)
+        else:
+            print 'Failed to execute action: ', action.action_type
 
 
 celery_proc = Process(target=task_queue.celery.worker_main)

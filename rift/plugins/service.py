@@ -13,13 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import subprocess
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import ActionResource
+
 
 class ServiceControl(ActionResource, AbstractPlugin):
 
     def get_name(self):
         return 'service'
 
-    def on_post(self, req, resp):
-        super(ServiceControl, self).on_post()
+    def execute_action(self, action):
+        subprocess.call(
+            [
+                'ansible',
+                'web[0]',
+                '-m', 'service',
+                '-a', '"name=apache2 state=stopped"'
+            ]
+        )
+

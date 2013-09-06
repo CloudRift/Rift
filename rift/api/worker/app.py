@@ -48,6 +48,7 @@ class WorkerApp(App):
 
         for action in job.actions:
             plugin = self.get_action_plugin(action.action_type)
+
             if plugin:
                 plugin.execute_action(action)
             else:

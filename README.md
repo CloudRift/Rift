@@ -4,6 +4,13 @@ Rift
 Rift is a project inspired by the [Netflix Chaos Monkey](http://techblog.netflix.com/2012/07/chaos-monkey-released-into-wild.html) 
 project. It is designed to allow an OpenStack consumer to test their solution to various failure scenarios.
 
+Requirements
+============
+
+If installing the service on Ubuntu 12.04, you will need the following packages.
+
+    apt-get install build-essential python-dev python-pip
+
 
 Installation
 ============

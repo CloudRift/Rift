@@ -83,4 +83,5 @@ def load_config(config_file=_CONFIG_FILE):
 
 
 def get_config():
+    load_config()
     return _cfg

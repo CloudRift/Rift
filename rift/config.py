@@ -20,10 +20,10 @@ _CFG_DEFAULTS = {
         'database': 'rift'
     },
     'celery': {
-        'BROKER_URL': 'amqp://guest@db-01.cloudrift.com//',
-        'CELERYD_CONCURRENCY': 2,
-        'CELERY_TASK_SERIALIZER': "json",
-        'CELERYD_HIJACK_ROOT_LOGGER': False
+        'broker_url': 'amqp://guest@db-01.cloudrift.com//',
+        'celeryd_concurrency': 2,
+        'celery_task_serializer': "json",
+        'celeryd_hijack_root_logger': False
 
     }
 }

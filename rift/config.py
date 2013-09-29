@@ -9,7 +9,7 @@ other modules through the get_config module.
 from ConfigParser import ConfigParser
 import os.path
 
-_CONFIG_FILE = '/Users/stev1090/dev/CloudRift/Rift/etc/rift/rift.conf'
+_CONFIG_FILE = '/opt/cloudrift/etc/rift/rift.conf'
 
 _CFG_DEFAULTS = {
     'logging': {

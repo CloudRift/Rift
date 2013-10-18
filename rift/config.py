@@ -83,5 +83,9 @@ def load_config(config_file=_CONFIG_FILE):
 
 
 def get_config():
-    load_config()
+    config = _CONFIG_FILE
+    if os.path.exists('./etc/rift/rift.conf'):
+        config = os.path.abspath('./etc/rift/rift.conf')
+
+    load_config(config_file=config)
     return _cfg

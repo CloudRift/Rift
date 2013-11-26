@@ -3,6 +3,7 @@ import uuid
 from rift.data.handler import get_handler
 
 JOB_COLLECTION = "jobs"
+TENANT_COLLECTION = "tenants"
 
 
 class Tenant(object):
@@ -130,4 +131,38 @@ def delete_job(job_id):
     db_handler.delete_document(
         object_name=JOB_COLLECTION,
         query_filter={"job_id": job_id}
+    )
+
+
+def build_tenant_from_dict(tenant_dict):
+    tenant_id = tenant_dict["tenant_id"]
+    name = tenant_dict["name"]
+    targets = [
+        _build_target_from_dict(target_dict)
+        for target_dict in tenant_dict["targets"]]
+    return Tenant(tenant_id=tenant_id, name=name, targets=targets)
+
+
+def save_tenant(tenant):
+    db_handler = get_handler()
+    db_handler.insert_document(
+        object_name=TENANT_COLLECTION, document=tenant.as_dict()
+    )
+
+
+def get_tenant(tenant_id):
+    db_handler = get_handler()
+    tenant_dict = db_handler.get_document(
+        object_name=TENANT_COLLECTION,
+        query_filter={"tenant_id": tenant_id})
+
+    return build_tenant_from_dict(tenant_dict)
+
+
+def update_tenant(tenant):
+    db_handler = get_handler()
+    db_handler.update_document(
+        object_name=TENANT_COLLECTION,
+        document=tenant.as_dict(),
+        query_filter={"tenant_id": tenant.tenant_id}
     )

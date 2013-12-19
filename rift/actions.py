@@ -18,7 +18,7 @@ from pynsive import rlist_classes
 
 from rift import task_queue
 from rift.plugins import AbstractPlugin
-from rift.data.model import get_job
+from rift.data.model import Job
 
 
 def get_action_plugin(action_plugins, name):
@@ -53,7 +53,7 @@ ACTION_PLUGINS = load_plugins()
 
 @task_queue.celery.task
 def execute_job(job_id):
-    job = get_job(job_id)
+    job = Job.get_job(job_id)
     if not job:
         return
 

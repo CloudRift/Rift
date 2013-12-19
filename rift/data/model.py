@@ -19,6 +19,40 @@ class Tenant(object):
             "targets": [target.as_dict() for target in self.targets]
         }
 
+    @classmethod
+    def build_tenant_from_dict(cls, tenant_dict):
+        tenant_id = tenant_dict.get("tenant_id")
+        name = tenant_dict.get("name")
+        targets = [
+            Target.build_target_from_dict(target_dict)
+            for target_dict in tenant_dict.get("targets")]
+        return Tenant(tenant_id=tenant_id, name=name, targets=targets)
+
+    @classmethod
+    def save_tenant(cls, tenant):
+        db_handler = get_handler()
+        db_handler.insert_document(
+            object_name=TENANT_COLLECTION, document=tenant.as_dict()
+        )
+
+    @classmethod
+    def get_tenant(cls, tenant_id):
+        db_handler = get_handler()
+        tenant_dict = db_handler.get_document(
+            object_name=TENANT_COLLECTION,
+            query_filter={"tenant_id": tenant_id})
+
+        return Tenant.build_tenant_from_dict(tenant_dict)
+
+    @classmethod
+    def update_tenant(cls, tenant):
+        db_handler = get_handler()
+        db_handler.update_document(
+            object_name=TENANT_COLLECTION,
+            document=tenant.as_dict(),
+            query_filter={"tenant_id": tenant.tenant_id}
+        )
+
 
 class Job(object):
     def __init__(self, tenant_id, name, actions, job_id=None):
@@ -35,6 +69,60 @@ class Job(object):
             "actions": [action.as_dict() for action in self.actions]
         }
 
+    @classmethod
+    def build_job_from_dict(cls, job_dict):
+        tenant_id = job_dict.get("tenant_id")
+        name = job_dict.get("name")
+        actions = [
+            Action.build_action_from_dict(action_dict)
+            for action_dict in job_dict.get("actions")]
+        job_id = job_dict.get("job_id")
+
+        return Job(tenant_id=tenant_id, name=name, actions=actions,
+                   job_id=job_id)
+
+    @classmethod
+    def save_job(cls, job):
+        db_handler = get_handler()
+        db_handler.insert_document(
+            object_name=JOB_COLLECTION, document=job.as_dict()
+        )
+
+    @classmethod
+    def update_job(cls, job):
+        db_handler = get_handler()
+        db_handler.update_document(
+            object_name=JOB_COLLECTION,
+            document=job.as_dict(),
+            query_filter={"job_id": job.job_id}
+        )
+
+    @classmethod
+    def get_job(cls, job_id):
+        db_handler = get_handler()
+        job_dict = db_handler.get_document(
+            object_name=JOB_COLLECTION,
+            query_filter={"job_id": job_id})
+
+        return Job.build_job_from_dict(job_dict)
+
+    @classmethod
+    def get_jobs(cls, tenant_id):
+        db_handler = get_handler()
+        jobs_dict = db_handler.get_documents(
+            object_name=JOB_COLLECTION,
+            query_filter={"tenant_id": tenant_id})
+
+        return [Job.build_job_from_dict(job) for job in jobs_dict]
+
+    @classmethod
+    def delete_job(cls, job_id):
+        db_handler = get_handler()
+        db_handler.delete_document(
+            object_name=JOB_COLLECTION,
+            query_filter={"job_id": job_id}
+        )
+
 
 class Action(object):
     def __init__(self, targets, action_type, parameters=None):
@@ -48,6 +136,19 @@ class Action(object):
             "action_type": self.action_type,
             "parameters": self.parameters
         }
+
+    @classmethod
+    def build_action_from_dict(cls, action_dict):
+        targets = [
+            Target.build_target_from_dict(target_dict)
+            for target_dict in action_dict.get("targets")]
+        action_type = action_dict.get("action_type")
+        parameters = action_dict.get("parameters")
+        return Action(
+            targets=targets,
+            action_type=action_type,
+            parameters=parameters
+        )
 
 
 class Target(object):
@@ -66,103 +167,6 @@ class Target(object):
             "private_ip": self.private_ip
         }
 
-
-def build_job_from_dict(job_dict):
-    tenant_id = job_dict["tenant_id"]
-    name = job_dict["name"]
-    actions = [
-        _build_action_from_dict(action_dict)
-        for action_dict in job_dict["actions"]]
-    job_id = job_dict["job_id"]
-
-    return Job(tenant_id=tenant_id, name=name, actions=actions, job_id=job_id)
-
-
-def _build_action_from_dict(action_dict):
-    targets = [
-        _build_target_from_dict(target_dict)
-        for target_dict in action_dict["targets"]]
-    action_type = action_dict["action_type"]
-    parameters = action_dict["parameters"]
-    return Action(
-        targets=targets,
-        action_type=action_type,
-        parameters=parameters
-    )
-
-
-def _build_target_from_dict(target_dict):
-    return Target(**target_dict)
-
-
-def save_job(job):
-    db_handler = get_handler()
-    db_handler.insert_document(
-        object_name=JOB_COLLECTION, document=job.as_dict()
-    )
-
-
-def update_job(job):
-    db_handler = get_handler()
-    db_handler.update_document(
-        object_name=JOB_COLLECTION,
-        document=job.as_dict(),
-        query_filter={"job_id": job.job_id}
-    )
-
-def get_job(job_id):
-    db_handler = get_handler()
-    job_dict = db_handler.get_document(
-        object_name=JOB_COLLECTION,
-        query_filter={"job_id": job_id})
-
-    return build_job_from_dict(job_dict)
-
-def get_jobs(tenant_id):
-    db_handler = get_handler()
-    jobs_dict = db_handler.get_documents(
-        object_name=JOB_COLLECTION,
-        query_filter={"tenant_id": tenant_id})
-
-    return [build_job_from_dict(job) for job in jobs_dict]
-
-def delete_job(job_id):
-    db_handler = get_handler()
-    db_handler.delete_document(
-        object_name=JOB_COLLECTION,
-        query_filter={"job_id": job_id}
-    )
-
-
-def build_tenant_from_dict(tenant_dict):
-    tenant_id = tenant_dict["tenant_id"]
-    name = tenant_dict["name"]
-    targets = [
-        _build_target_from_dict(target_dict)
-        for target_dict in tenant_dict["targets"]]
-    return Tenant(tenant_id=tenant_id, name=name, targets=targets)
-
-
-def save_tenant(tenant):
-    db_handler = get_handler()
-    db_handler.insert_document(
-        object_name=TENANT_COLLECTION, document=tenant.as_dict()
-    )
-
-
-def get_tenant(tenant_id):
-    db_handler = get_handler()
-    tenant_dict = db_handler.get_document(
-        object_name=TENANT_COLLECTION,
-        query_filter={"tenant_id": tenant_id})
-
-    return build_tenant_from_dict(tenant_dict)
-
-
-def update_tenant(tenant):
-    db_handler = get_handler()
-    db_handler.update_document(
-        object_name=TENANT_COLLECTION,
-        document=tenant.as_dict(),
-        query_filter={"tenant_id": tenant.tenant_id}
-    )
+    @classmethod
+    def build_target_from_dict(cls, target_dict):
+        return Target(**target_dict)

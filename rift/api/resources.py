@@ -17,9 +17,7 @@ import uuid
 import falcon
 
 from rift.api.common.resources import ApiResource
-from rift.data.model import (build_job_from_dict, get_job, get_jobs, save_job,
-                             build_tenant_from_dict, save_tenant, get_tenant,
-                             update_tenant)
+from rift.data.model import (Job, Tenant)
 from rift.actions import execute_job
 
 
@@ -29,21 +27,20 @@ class JobsResource(ApiResource):
         body = self.load_body(req)
         body['tenant_id'] = tenant_id
         body['job_id'] = str(uuid.uuid4())
-        job = build_job_from_dict(body)
-        save_job(job)
+        job = Job.build_job_from_dict(body)
+        Job.save_job(job)
         execute_job.delay(job.job_id)
         resp.status = falcon.HTTP_201
 
     def on_get(self, req, resp, tenant_id):
-        jobs = get_jobs(tenant_id)
+        jobs = Job.get_jobs(tenant_id)
         resp.body = self.format_response_body([job.as_dict() for job in jobs])
-
 
 
 class GetJobResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id, job_id):
-        job = get_job(job_id)
+        job = Job.get_job(job_id)
         if job:
             resp.body = self.format_response_body(job.as_dict())
         else:
@@ -56,12 +53,12 @@ class TenantsResource(ApiResource):
     def on_post(self, req, resp, tenant_id):
         body = self.load_body(req)
         body['tenant_id'] = tenant_id
-        tenant = build_tenant_from_dict(body)
-        save_tenant(tenant)
+        tenant = Tenant.build_tenant_from_dict(body)
+        Tenant.save_tenant(tenant)
         resp.status = falcon.HTTP_201
 
     def on_get(self, req, resp, tenant_id):
-        tenant = get_tenant(tenant_id)
+        tenant = Tenant.get_tenant(tenant_id)
         if tenant:
             resp.body = self.format_response_body(tenant.as_dict())
         else:
@@ -70,12 +67,12 @@ class TenantsResource(ApiResource):
                 tenant_id=tenant_id)
 
     def on_put(self, req, resp, tenant_id):
-        tenant = get_tenant(tenant_id)
+        tenant = Tenant.get_tenant(tenant_id)
         if tenant:
             body = self.load_body(req)
             body['tenant_id'] = tenant_id
-            tenant = build_tenant_from_dict(body)
-            update_tenant(tenant)
+            tenant = Tenant.build_tenant_from_dict(body)
+            Tenant.update_tenant(tenant)
         else:
             resp.status = falcon.HTTP_404
             resp.body = 'Cannot find tenant: {tenant_id}'.format(

@@ -17,7 +17,7 @@ import uuid
 import falcon
 
 from rift.api.common.resources import ApiResource
-from rift.data.model import (Job, Tenant)
+from rift.data.model import (Job, Tenant, Target)
 from rift.actions import execute_job
 
 
@@ -77,3 +77,27 @@ class TenantsResource(ApiResource):
             resp.status = falcon.HTTP_404
             resp.body = 'Cannot find tenant: {tenant_id}'.format(
                 tenant_id=tenant_id)
+
+
+class TargetsResource(ApiResource):
+
+    def on_post(self, req, resp, tenant_id):
+        body = self.load_body(req)
+        target_id = str(uuid.uuid4())
+        body['target_id'] = target_id
+        target = Target.build_target_from_dict(body)
+        Target.save_target(target)
+        resp.status = falcon.HTTP_201
+        resp.body = self.format_response_body({'target_id': target_id})
+
+
+class GetTargetResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, target_id):
+        target = Target.get_target(target_id)
+        if target:
+            resp.body = self.format_response_body(target.as_dict())
+        else:
+            resp.status = falcon.HTTP_404
+            resp.body = 'Cannot find target: {target_id}'.format(
+                target_id=target_id)

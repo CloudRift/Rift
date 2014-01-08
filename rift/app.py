@@ -16,7 +16,8 @@ limitations under the License.
 import falcon
 
 from rift.api.version.resources import VersionResource
-from rift.api.resources import (JobsResource, GetJobResource, TenantsResource)
+from rift.api.resources import (JobsResource, GetJobResource, TenantsResource,
+                                TargetsResource, GetTargetResource)
 
 
 class App(falcon.API):
@@ -27,10 +28,14 @@ class App(falcon.API):
         jobs = JobsResource()
         get_job = GetJobResource()
         tenants = TenantsResource()
+        targets = TargetsResource()
+        get_target = GetTargetResource()
 
         self.add_route('/', version)
         self.add_route('/v1/{tenant_id}', tenants)
         self.add_route('/v1/{tenant_id}/jobs', jobs)
         self.add_route('/v1/{tenant_id}/jobs/{job_id}', get_job)
+        self.add_route('/v1/{tenant_id}/targets', targets)
+        self.add_route('/v1/{tenant_id}/targets/{target_id}', get_target)
 
 application = App()

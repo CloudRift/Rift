@@ -4,6 +4,7 @@ from rift.data.handler import get_handler
 
 JOB_COLLECTION = "jobs"
 TENANT_COLLECTION = "tenants"
+TARGET_COLLECTION = "targets"
 
 
 class Tenant(object):
@@ -155,18 +156,41 @@ class Target(object):
     """
     Represents a target node to execute actions against
     """
-    def __init__(self, name, public_ip, private_ip):
+    def __init__(self, type, address, address_type, authentication, name=None,
+                 target_id=None):
+        self.type = type
+        self.address = address
+        self.address_type = address_type
+        self.authentication = authentication
         self.name = name
-        self.public_ip = public_ip
-        self.private_ip = private_ip
+        self.target_id = target_id if target_id is not None else uuid.uuid4()
 
     def as_dict(self):
         return {
-            "name": self.name,
-            "public_ip": self.public_ip,
-            "private_ip": self.private_ip
+            "target_id": self.target_id,
+            "type": self.type,
+            "address": self.address,
+            "address_type": self.address_type,
+            "authentication": self.authentication,
+            "name": self.name
         }
 
     @classmethod
     def build_target_from_dict(cls, target_dict):
         return Target(**target_dict)
+
+    @classmethod
+    def save_target(cls, target):
+        db_handler = get_handler()
+        db_handler.insert_document(
+            object_name=TARGET_COLLECTION, document=target.as_dict()
+        )
+
+    @classmethod
+    def get_target(cls, target_id):
+        db_handler = get_handler()
+        target_dict = db_handler.get_document(
+            object_name=TARGET_COLLECTION,
+            query_filter={"target_id": target_id})
+
+        return Target.build_target_from_dict(target_dict)

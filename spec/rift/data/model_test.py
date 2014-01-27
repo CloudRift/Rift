@@ -16,7 +16,7 @@ class TestingDataModel(Spec):
                           }
                       })
 
-    def test_job_as_dict(self):
+    def job_can_convert_to_dictionary(self):
         target1 = self._create_target()
         target2 = self._create_target()
         targets = [target1, target2]
@@ -37,14 +37,14 @@ class TestingDataModel(Spec):
         test_job = Job.build_job_from_dict(job_dict)
         expect(job_dict).to.equal(test_job.as_dict())
 
-    def test_target_as_dict(self):
+    def target_can_convert_to_dictionary(self):
         target = self._create_target()
         target_dict = target.as_dict()
 
         test_target = Target.build_target_from_dict(target_dict)
         expect(target_dict).to.equal(test_target.as_dict())
 
-    def test_tenant_as_dict(self):
+    def tenant_can_convert_to_dictionary(self):
         target1 = self._create_target()
         target2 = self._create_target()
         targets = [target1, target2]
@@ -55,7 +55,7 @@ class TestingDataModel(Spec):
         test_tenant = Tenant.build_tenant_from_dict(tenant_dict)
         expect(tenant_dict).to.equal(test_tenant.as_dict())
 
-    def test_action_as_dict(self):
+    def action_can_convert_to_dictionary(self):
         target1 = self._create_target()
         target2 = self._create_target()
         targets = [target1, target2]

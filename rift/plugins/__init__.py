@@ -36,6 +36,6 @@ class AbstractPlugin():
     def execute_action(self, action):
         pass
 
-    #@abstractmethod
-    #def on_post(self, req, resp):
+    # @abstractmethod
+    # def on_post(self, req, resp):
     #    pass

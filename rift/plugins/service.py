@@ -32,4 +32,3 @@ class ServiceControl(ActionResource, AbstractPlugin):
                 '-a', 'name=apache2 state=stopped',
             ]
         )
-

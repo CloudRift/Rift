@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from pynsive.plugin.manager import PluginManager
 from pynsive import rlist_classes
 
 from rift import task_queue
@@ -28,9 +27,6 @@ def get_action_plugin(action_plugins, name):
 
 
 def load_plugins():
-
-    plugin_manager = PluginManager()
-
     plugin_types = rlist_classes('rift.plugins', is_plugin)
     plugins = []
     for plugin_type in plugin_types:
@@ -44,12 +40,12 @@ def load_plugins():
 
 
 def is_plugin(plugin_type):
-    return (issubclass(
-        plugin_type, AbstractPlugin)
+    return (issubclass(plugin_type, AbstractPlugin)
             and plugin_type is not AbstractPlugin)
 
 
 ACTION_PLUGINS = load_plugins()
+
 
 @task_queue.celery.task
 def execute_job(job_id):

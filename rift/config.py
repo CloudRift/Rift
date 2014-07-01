@@ -66,7 +66,8 @@ class RiftConfiguration(object):
         for section_name in cfg_parser.sections():
             section = ConfigSection()
             for option in cfg_parser.options(section_name):
-                section.add_option(option, cfg_parser.get(section_name, option))
+                section.add_option(option, cfg_parser.get(section_name,
+                                                          option))
             self.__setattr__(section_name, section)
 
 

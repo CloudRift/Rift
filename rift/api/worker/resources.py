@@ -55,4 +55,3 @@ class ActionResource(ApiResource):
     def on_post(self, req, resp):
         # TODO: Parse req for info.
         pass
-

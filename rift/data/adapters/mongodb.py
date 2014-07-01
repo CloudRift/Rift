@@ -54,7 +54,7 @@ class MongoDB():
         if query_filter is None:
             query_filter = dict()
         document = self.database[object_name].find_one(query_filter)
-        #remove the mongodb _id form the document
+        # remove the mongodb _id form the document
         document.pop("_id")
         return document
 
@@ -66,7 +66,7 @@ class MongoDB():
         if query_filter is None:
             query_filter = dict()
         documents = self.database[object_name].find(query_filter)
-        #remove the mongodb _id form the document
+        # remove the mongodb _id form the document
 
         cleaned = []
         for doc in documents:
@@ -77,9 +77,9 @@ class MongoDB():
         return cleaned
 
     def update_document(self, object_name, document, query_filter=None):
-        '''
+        """
         Updates an existing document that matches the query filter
-        '''
+        """
         if query_filter is None:
             query_filter = dict()
 

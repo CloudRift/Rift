@@ -6,15 +6,16 @@ from uuid import uuid4
 class TestingDataModel(Spec):
 
     def _create_target(self):
+        auth = {
+            "cloud_account": {
+                "username": "your_username",
+                "token": "your_api_token"
+            }
+        }
         return Target(name=str(uuid4()), type="cloud-server",
                       address={"ipv4": "4", "ipv6": "6"},
                       address_type="nova-name",
-                      authentication={
-                          "cloud_account": {
-                              "username": "your_username",
-                              "token": "your_api_token"
-                          }
-                      })
+                      authentication=auth)
 
     def job_can_convert_to_dictionary(self):
         target1 = self._create_target()

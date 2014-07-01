@@ -47,4 +47,3 @@ class SpecAvailableActions(Spec):
         body = self.resource.get_available_actions_dict(bad_list)
 
         self._check_for_one_element(body)
-

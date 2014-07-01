@@ -36,12 +36,12 @@ class ApiResource(object):
         """
         try:
             raw_json = req.stream.read()
-        except Exception, ex:
+        except Exception:
             self.abort(falcon.HTTP_500, 'Read Error')
 
         try:
             obj = json.loads(raw_json)
-        except ValueError, ex:
+        except ValueError:
             self.abort(falcon.HTTP_400, 'Malformed JSON')
 
         if validator:

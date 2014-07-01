@@ -24,8 +24,8 @@ class WorkerApp(App):
     def __init__(self):
         super(WorkerApp, self).__init__()
 
-        #available_actions = AvailableActionsResource(ACTION_PLUGINS)
-        #self.add_route('/actions', available_actions)
+        # available_actions = AvailableActionsResource(ACTION_PLUGINS)
+        # self.add_route('/actions', available_actions)
 
         # TODO: Add routes for all of the plugins
         # for action in self.action_plugins:

@@ -6,7 +6,7 @@ conf = get_config()
 
 celery = Celery('cloudrift')
 
-#load celery configurations from rift config and apply them
+# load celery configurations from rift config and apply them
 celery.conf.BROKER_URL = conf.celery.broker_url
 celery.conf.CELERYD_CONCURRENCY = conf.celery.celeryd_concurrency
 celery.conf.CELERY_TASK_SERIALIZER = conf.celery.celery_task_serializer

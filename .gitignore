@@ -2,3 +2,5 @@
 *.pyc
 .coverage
 *.iml
+.tox
+*.egg-info

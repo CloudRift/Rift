@@ -15,6 +15,7 @@ limitations under the License.
 """
 import uuid
 import falcon
+import json
 
 from rift.api.common.resources import ApiResource
 from rift.data.model import (Job, Tenant, Target)
@@ -46,8 +47,9 @@ class GetJobResource(ApiResource):
         if job:
             resp.body = self.format_response_body(job.as_dict())
         else:
+            msg = 'Cannot find job: {job_id}'.format(job_id=job_id)
             resp.status = falcon.HTTP_404
-            resp.body = 'Cannot find job: {job_id}'.format(job_id=job_id)
+            resp.body = json.dumps({'description': msg})
 
 
 class TenantsResource(ApiResource):
@@ -66,9 +68,9 @@ class TenantsResource(ApiResource):
         if tenant:
             resp.body = self.format_response_body(tenant.as_dict())
         else:
+            msg = 'Cannot find tenant: {tenant_id}'.format(tenant_id=tenant_id)
             resp.status = falcon.HTTP_404
-            resp.body = 'Cannot find tenant: {tenant_id}'.format(
-                tenant_id=tenant_id)
+            resp.body = json.dumps({'description': msg})
 
     def on_put(self, req, resp, tenant_id):
         tenant = Tenant.get_tenant(tenant_id)
@@ -79,9 +81,9 @@ class TenantsResource(ApiResource):
             tenant = Tenant.build_tenant_from_dict(body)
             Tenant.update_tenant(tenant)
         else:
+            msg = 'Cannot find tenant: {tenant_id}'.format(tenant_id=tenant_id)
             resp.status = falcon.HTTP_404
-            resp.body = 'Cannot find tenant: {tenant_id}'.format(
-                tenant_id=tenant_id)
+            resp.body = json.dumps({'description': msg})
 
 
 class TargetsResource(ApiResource):
@@ -92,7 +94,7 @@ class TargetsResource(ApiResource):
         body = self.load_body(req)
         body['target_id'] = target_id
 
-        target = Target.build_target_from_dict(body)
+        target = Target.build_target_from_dict(tenant_id, body)
         Target.save_target(target)
 
         resp.status = falcon.HTTP_201
@@ -108,10 +110,10 @@ class TargetsResource(ApiResource):
 class GetTargetResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id, target_id):
-        target = Target.get_target(target_id)
+        target = Target.get_target(tenant_id, target_id)
         if target:
             resp.body = self.format_response_body(target.as_dict())
         else:
+            msg = 'Cannot find target: {target_id}'.format(target_id=target_id)
             resp.status = falcon.HTTP_404
-            resp.body = 'Cannot find target: {target_id}'.format(
-                target_id=target_id)
+            resp.body = json.dumps({'description': msg})

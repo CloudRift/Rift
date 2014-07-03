@@ -163,19 +163,26 @@ class Target(object):
     """
     Represents a target node to execute actions against
     """
-    def __init__(self, type, address, address_type, authentication, name=None,
-                 target_id=None):
-        self.type = type
+    def __init__(self, tenant_id, target_type, address, address_type,
+                 authentication, name=None, target_id=None):
+        self.tenant_id = tenant_id
+        self.target_type = target_type
         self.address = address
         self.address_type = address_type
         self.authentication = authentication
         self.name = name
-        self.target_id = target_id if target_id is not None else uuid.uuid4()
+        self.target_id = target_id if target_id else str(uuid.uuid4())
+
+    def db_dict(self):
+        converted = self.as_dict()
+        converted['tenant_id'] = self.tenant_id
+
+        return converted
 
     def as_dict(self):
         return {
             "target_id": self.target_id,
-            "type": self.type,
+            "target_type": self.target_type,
             "address": self.address,
             "address_type": self.address_type,
             "authentication": self.authentication,
@@ -183,24 +190,34 @@ class Target(object):
         }
 
     @classmethod
-    def build_target_from_dict(cls, target_dict):
-        return Target(**target_dict)
+    def build_target_from_dict(cls, tenant_id, target_dict):
+        if not target_dict:
+            return
+
+        kwargs = {
+            'target_type': target_dict.get('type'),
+            'address': target_dict.get('address'),
+            'address_type': target_dict.get('address_type'),
+            'authentication': target_dict.get('authentication'),
+            'name': target_dict.get('name')
+        }
+        return Target(tenant_id, **kwargs)
 
     @classmethod
     def save_target(cls, target):
         db_handler = get_handler()
         db_handler.insert_document(
-            object_name=TARGET_COLLECTION, document=target.as_dict()
+            object_name=TARGET_COLLECTION, document=target.db_dict()
         )
 
     @classmethod
-    def get_target(cls, target_id):
+    def get_target(cls, tenant_id, target_id):
         db_handler = get_handler()
         target_dict = db_handler.get_document(
             object_name=TARGET_COLLECTION,
             query_filter={"target_id": target_id})
 
-        return Target.build_target_from_dict(target_dict)
+        return Target.build_target_from_dict(tenant_id, target_dict)
 
     @classmethod
     def get_targets(cls, tenant_id):
@@ -209,5 +226,5 @@ class Target(object):
             object_name=TARGET_COLLECTION,
             query_filter={"tenant_id": tenant_id})
 
-        return [Target.build_target_from_dict(target)
+        return [Target.build_target_from_dict(tenant_id, target)
                 for target in targets_dict]

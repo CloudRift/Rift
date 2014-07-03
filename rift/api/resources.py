@@ -36,8 +36,8 @@ class JobsResource(ApiResource):
         resp.status = falcon.HTTP_201
 
     def on_get(self, req, resp, tenant_id):
-        jobs = Job.get_jobs(tenant_id)
-        resp.body = self.format_response_body([job.as_dict() for job in jobs])
+        jobs_list = [job.as_dict() for job in Job.get_jobs(tenant_id)]
+        resp.body = self.format_response_body({'jobs': jobs_list})
 
 
 class GetJobResource(ApiResource):
@@ -104,7 +104,7 @@ class TargetsResource(ApiResource):
         targets = Target.get_targets(tenant_id)
         target_list = [target.summary_dict() for target in targets]
 
-        resp.body = self.format_response_body(target_list)
+        resp.body = self.format_response_body({'targets': target_list})
 
 
 class GetTargetResource(ApiResource):

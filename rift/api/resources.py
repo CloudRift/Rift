@@ -82,13 +82,22 @@ class TenantsResource(ApiResource):
 class TargetsResource(ApiResource):
 
     def on_post(self, req, resp, tenant_id):
-        body = self.load_body(req)
         target_id = str(uuid.uuid4())
+
+        body = self.load_body(req)
         body['target_id'] = target_id
+
         target = Target.build_target_from_dict(body)
         Target.save_target(target)
+
         resp.status = falcon.HTTP_201
         resp.body = self.format_response_body({'target_id': target_id})
+
+    def on_get(self, req, resp, tenant_id):
+        targets = Target.get_targets(tenant_id)
+        target_list = [target.as_dict() for target in targets]
+
+        resp.body = self.format_response_body(target_list)
 
 
 class GetTargetResource(ApiResource):

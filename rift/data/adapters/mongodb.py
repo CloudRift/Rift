@@ -55,7 +55,8 @@ class MongoDB():
             query_filter = dict()
         document = self.database[object_name].find_one(query_filter)
         # remove the mongodb _id form the document
-        document.pop("_id")
+        if document:
+            document.pop("_id")
         return document
 
     def get_documents(self, object_name, query_filter=None):

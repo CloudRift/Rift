@@ -43,7 +43,14 @@ class Tenant(object):
             object_name=TENANT_COLLECTION,
             query_filter={"tenant_id": tenant_id})
 
-        return Tenant.build_tenant_from_dict(tenant_dict)
+        tenant = Tenant.build_tenant_from_dict(tenant_dict)
+
+        # Create Tenant if it doesn't exist
+        if not tenant_dict:
+            tenant = cls(tenant_id)
+            cls.save_tenant(tenant)
+
+        return tenant
 
     @classmethod
     def update_tenant(cls, tenant):
@@ -194,3 +201,13 @@ class Target(object):
             query_filter={"target_id": target_id})
 
         return Target.build_target_from_dict(target_dict)
+
+    @classmethod
+    def get_targets(cls, tenant_id):
+        db_handler = get_handler()
+        targets_dict = db_handler.get_documents(
+            object_name=TARGET_COLLECTION,
+            query_filter={"tenant_id": tenant_id})
+
+        return [Target.build_target_from_dict(target)
+                for target in targets_dict]

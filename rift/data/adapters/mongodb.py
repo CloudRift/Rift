@@ -71,7 +71,6 @@ class MongoDB():
 
         cleaned = []
         for doc in documents:
-            print 'job_id:', doc.get('job_id')
             doc.pop('_id', None)
             cleaned.append(doc)
 

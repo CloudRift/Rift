@@ -8,26 +8,23 @@ TARGET_COLLECTION = "targets"
 
 
 class Tenant(object):
-    def __init__(self, tenant_id, name=None, targets=None):
+    def __init__(self, tenant_id, name=None):
         self.tenant_id = tenant_id
         self.name = name
-        self.targets = targets if targets is not None else list()
 
     def as_dict(self):
         return {
             "tenant_id": self.tenant_id,
             "name": self.name,
-            "targets": [target.as_dict() for target in self.targets]
         }
 
     @classmethod
     def build_tenant_from_dict(cls, tenant_dict):
-        tenant_id = tenant_dict.get("tenant_id")
-        name = tenant_dict.get("name")
-        targets = [
-            Target.build_target_from_dict(target_dict)
-            for target_dict in tenant_dict.get("targets")]
-        return Tenant(tenant_id=tenant_id, name=name, targets=targets)
+        kwargs = {
+            'tenant_id': tenant_dict.get("tenant_id"),
+            'name': tenant_dict.get("name")
+        }
+        return Tenant(**kwargs)
 
     @classmethod
     def save_tenant(cls, tenant):

@@ -19,7 +19,7 @@ import json
 
 from rift.api.common.resources import ApiResource
 from rift.data.model import (Job, Tenant, Target)
-from rift.actions import execute_job
+# from rift.actions import execute_job
 
 
 class JobsResource(ApiResource):
@@ -27,16 +27,18 @@ class JobsResource(ApiResource):
     def on_post(self, req, resp, tenant_id):
         body = self.load_body(req)
         body['tenant_id'] = tenant_id
-        body['job_id'] = str(uuid.uuid4())
 
         job = Job.build_job_from_dict(body)
         Job.save_job(job)
-        execute_job.delay(job.job_id)
+
+        # TODO(jmv): Figure out scheduling of jobs
+        # execute_job.delay(job.id)
 
         resp.status = falcon.HTTP_201
+        resp.body = self.format_response_body({'job_id': job.id})
 
     def on_get(self, req, resp, tenant_id):
-        jobs_list = [job.as_dict() for job in Job.get_jobs(tenant_id)]
+        jobs_list = [job.summary_dict() for job in Job.get_jobs(tenant_id)]
         resp.body = self.format_response_body({'jobs': jobs_list})
 
 
@@ -62,6 +64,7 @@ class TenantsResource(ApiResource):
         Tenant.save_tenant(tenant)
 
         resp.status = falcon.HTTP_201
+        resp.body = self.format_response_body({'tenant_id': tenant.id})
 
     def on_get(self, req, resp, tenant_id):
         tenant = Tenant.get_tenant(tenant_id)

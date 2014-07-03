@@ -92,7 +92,7 @@ class TargetsResource(ApiResource):
         target_id = str(uuid.uuid4())
 
         body = self.load_body(req)
-        body['target_id'] = target_id
+        body['id'] = target_id
 
         target = Target.build_target_from_dict(tenant_id, body)
         Target.save_target(target)
@@ -102,7 +102,7 @@ class TargetsResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id):
         targets = Target.get_targets(tenant_id)
-        target_list = [target.as_dict() for target in targets]
+        target_list = [target.summary_dict() for target in targets]
 
         resp.body = self.format_response_body(target_list)
 

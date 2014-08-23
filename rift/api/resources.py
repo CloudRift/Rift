@@ -18,7 +18,9 @@ import falcon
 import json
 
 from rift.api.common.resources import ApiResource
-from rift.data.model import (Job, Tenant, Target)
+from rift.data.models.job import Job
+from rift.data.models.tenant import Tenant
+from rift.data.models.target import Target
 # from rift.actions import execute_job
 
 

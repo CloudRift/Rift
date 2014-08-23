@@ -1,10 +1,13 @@
 import uuid
 
 from rift.data.handler import get_handler
+from rift import log
 
 JOB_COLLECTION = "jobs"
 TENANT_COLLECTION = "tenants"
 TARGET_COLLECTION = "targets"
+
+LOG = log.get_logger()
 
 
 class Tenant(object):
@@ -40,12 +43,13 @@ class Tenant(object):
             object_name=TENANT_COLLECTION,
             query_filter={"tenant_id": tenant_id})
 
-        tenant = Tenant.build_tenant_from_dict(tenant_dict)
-
         # Create Tenant if it doesn't exist
         if not tenant_dict:
+            LOG.info('Tenant {0} not found. Creating...'.format(tenant_id))
             tenant = cls(tenant_id)
             cls.save_tenant(tenant)
+        else:
+            tenant = Tenant.build_tenant_from_dict(tenant_dict)
 
         return tenant
 

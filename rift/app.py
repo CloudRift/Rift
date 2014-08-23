@@ -15,14 +15,19 @@ limitations under the License.
 """
 import falcon
 
+from rift import log
 from rift.api.version.resources import VersionResource
 from rift.api.resources import (JobsResource, GetJobResource, TenantsResource,
                                 TargetsResource, GetTargetResource)
+
+LOG = log.get_logger()
 
 
 class App(falcon.API):
     def __init__(self):
         super(App, self).__init__()
+
+        LOG.info('Starting Rift...')
 
         version = VersionResource()
         jobs = JobsResource()

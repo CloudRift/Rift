@@ -1,10 +1,8 @@
 import logging
 
+logging.basicConfig(level=logging.INFO)
+LOG = logging.getLogger('Rift')
 
-logger = logging.getLogger()
 
-
-def set_logger():
-    logger.addHandler(logging.StreamHandler)
-    # TODO(jmv) Fix logging
-    # logger.level = conf
+def get_logger():
+    return LOG

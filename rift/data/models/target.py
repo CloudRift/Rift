@@ -8,12 +8,11 @@ class Target(object):
     """
     Represents a target node to execute actions against
     """
-    def __init__(self, tenant_id, target_type, address, address_type,
-                 authentication, target_id, name=None):
+    def __init__(self, tenant_id, target_type, address, authentication,
+                 target_id, name=None):
         self.tenant_id = tenant_id
         self.target_type = target_type
         self.address = address
-        self.address_type = address_type
         self.authentication = authentication
         self.name = name
         self.id = target_id
@@ -24,7 +23,6 @@ class Target(object):
             'type': self.target_type,
             'name': self.name,
             'address': self.address,
-            'address_type': self.address_type,
             'authentication': self.authentication
         }
 
@@ -45,7 +43,6 @@ class Target(object):
             'target_id': target_dict.get('id', str(uuid.uuid4())),
             'target_type': target_dict.get('type'),
             'address': target_dict.get('address'),
-            'address_type': target_dict.get('address_type'),
             'authentication': target_dict.get('authentication'),
             'name': target_dict.get('name')
         }

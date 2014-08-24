@@ -10,12 +10,9 @@ setup(
     version='0.1',
     description='',
     author='CLoudRift',
-    author_email='jvrbanac@gmail.com',
+    author_email='john.vrbanac@linux.com',
     tests_require=[
-        "nose",
-        "coverage",
-        "spec",
-        "tox"
+        "specter"
     ],
     install_requires=[
         "falcon",
@@ -23,7 +20,6 @@ setup(
         "pynsive",
         "pymongo"
     ],
-    test_suite='nose.collector',
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(exclude=['ez_setup'])

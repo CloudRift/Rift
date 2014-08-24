@@ -1,4 +1,2 @@
-nose
-coverage
-spec
+specter
 flake8

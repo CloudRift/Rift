@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from spec import Spec
+from specter import Spec, expect
 from falcon import HTTP_200, Response
 from rift.plugins import AbstractPlugin
 
@@ -26,25 +26,29 @@ class GenericPlugin(AbstractPlugin):
     def on_post(self, req, resp):
         pass
 
+    def execute_action(self, action):
+        pass
+
 
 class TestAbstractPlugin(Spec):
 
-    def it_cannot_be_instantiated(self):
+    def cannot_be_instantiated(self):
         try:
             result = AbstractPlugin()
         except TypeError:
             # Expected
             result = None
-        assert result is None
+        expect(result).to.be_none()
 
-    def it_should_allow_a_basic_implementation(self):
+    def should_allow_a_basic_implementation(self):
         plugin = GenericPlugin()
-        assert issubclass(type(plugin), AbstractPlugin)
 
-    def it_should_have_a_default_get_method(self):
+        expect(issubclass(type(plugin), AbstractPlugin)).to.be_true()
+
+    def should_have_a_default_get_method(self):
         plugin = GenericPlugin()
         resp, req = Response(), object()
 
         plugin.on_get(req=req, resp=resp)
-        assert resp.status == HTTP_200
-        assert resp.body == AbstractPlugin.API_HELP
+        expect(resp.status).to.equal(HTTP_200)
+        expect(resp.body).to.equal(AbstractPlugin.API_HELP)

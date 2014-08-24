@@ -1,7 +1,12 @@
 from rift.data.adapters import mongodb
+from rift import log
 
 _db_handler = mongodb.MongoDB()
-_db_handler.connect()
+
+try:
+    _db_handler.connect()
+except Exception, e:
+    log.get_logger().error("Problem connecting to MongoDB: %s", e)
 
 
 def get_handler():

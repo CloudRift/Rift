@@ -1,5 +1,5 @@
 falcon
 uwsgi
-pynsive
+git+https://github.com/jmvrbanac/pynsive.git@specter_patches#egg=pynsive
 pymongo
 celery

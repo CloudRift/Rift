@@ -1,5 +1,6 @@
 import uuid
 from rift.data.handler import get_handler
+from rift.data.models.address import Address
 
 TARGET_COLLECTION = "targets"
 
@@ -22,7 +23,7 @@ class Target(object):
             'id': self.id,
             'type': self.target_type,
             'name': self.name,
-            'address': self.address,
+            'address': self.address.as_dict(),
             'authentication': self.authentication
         }
 
@@ -39,10 +40,12 @@ class Target(object):
         if not target_dict:
             return
 
+        address_obj = Address.build_from_dict(target_dict.get('address'))
+
         kwargs = {
             'target_id': target_dict.get('id', str(uuid.uuid4())),
             'target_type': target_dict.get('type'),
-            'address': target_dict.get('address'),
+            'address': address_obj,
             'authentication': target_dict.get('authentication'),
             'name': target_dict.get('name')
         }

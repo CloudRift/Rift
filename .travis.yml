@@ -15,3 +15,5 @@ after_success:
 
 notifications:
     irc: "chat.freenode.net#cloudrift"
+    use_notice: true
+    skip_join: true

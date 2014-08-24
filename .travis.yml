@@ -3,7 +3,12 @@ python: 2.7
 env:
   - TOX_ENV=flake8
   - TOX_ENV=py27
+
 install:
-  - pip install tox
+  - pip install tox coveralls
+
 script:
   - tox -e $TOX_ENV
+
+after_success:
+    - coveralls

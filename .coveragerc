@@ -1,2 +1,10 @@
+[run]
+branch = True
+source =
+    rift/
+
 [report]
-omit = */site-packages/*,setup.py,*egg*,.tox/*,tests/*
+exclude_lines =
+    pragma: no cover
+    @abc.abstractmethod
+    @abc.abstractproperty

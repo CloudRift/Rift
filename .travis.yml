@@ -14,6 +14,8 @@ after_success:
     - coveralls
 
 notifications:
-    irc: "chat.freenode.net#cloudrift"
-    use_notice: true
-    skip_join: true
+    irc:
+        channels:
+            - "chat.freenode.net#cloudrift"
+        use_notice: true
+        skip_join: true

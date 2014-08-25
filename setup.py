@@ -12,12 +12,13 @@ setup(
     author='CLoudRift',
     author_email='john.vrbanac@linux.com',
     tests_require=[
-        "specter"
+        "specter",
+        "pretend>=1.0.8"
     ],
     install_requires=[
         "falcon",
         "uwsgi",
-        "pynsive",
+        "pynsive>=0.2.7",
         "pymongo"
     ],
     zip_safe=False,

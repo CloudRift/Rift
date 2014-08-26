@@ -42,27 +42,27 @@ class Job(object):
         return Job(**kwargs)
 
     @classmethod
-    def save_job(cls, job):
+    def save_job(cls, job, handler=None):
         job_dict = job.as_dict()
         job_dict['tenant_id'] = job.tenant_id
 
-        db_handler = get_handler()
+        db_handler = handler or get_handler()
         db_handler.insert_document(
             object_name=JOB_COLLECTION, document=job_dict
         )
 
     @classmethod
-    def update_job(cls, job):
-        db_handler = get_handler()
+    def update_job(cls, job, handler=None):
+        db_handler = handler or get_handler()
         db_handler.update_document(
             object_name=JOB_COLLECTION,
             document=job.as_dict(),
-            query_filter={"id": job.job_id}
+            query_filter={"id": job.id}
         )
 
     @classmethod
-    def get_job(cls, job_id):
-        db_handler = get_handler()
+    def get_job(cls, job_id, handler=None):
+        db_handler = handler or get_handler()
         job_dict = db_handler.get_document(
             object_name=JOB_COLLECTION,
             query_filter={"id": job_id})
@@ -70,8 +70,8 @@ class Job(object):
         return Job.build_job_from_dict(job_dict)
 
     @classmethod
-    def get_jobs(cls, tenant_id):
-        db_handler = get_handler()
+    def get_jobs(cls, tenant_id, handler=None):
+        db_handler = handler or get_handler()
         jobs_dict = db_handler.get_documents(
             object_name=JOB_COLLECTION,
             query_filter={"tenant_id": tenant_id})
@@ -79,8 +79,8 @@ class Job(object):
         return [Job.build_job_from_dict(job) for job in jobs_dict]
 
     @classmethod
-    def delete_job(cls, job_id):
-        db_handler = get_handler()
+    def delete_job(cls, job_id, handler=None):
+        db_handler = handler or get_handler()
         db_handler.delete_document(
             object_name=JOB_COLLECTION,
             query_filter={"id": job_id}

@@ -12,7 +12,7 @@ setup(
     author='CLoudRift',
     author_email='john.vrbanac@linux.com',
     tests_require=[
-        "specter",
+        "specter>=0.1.15",
         "pretend>=1.0.8"
     ],
     install_requires=[

@@ -21,7 +21,7 @@ from rift.api.common.resources import ApiResource
 from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
-# from rift.actions import execute_job
+from rift.actions import execute_job
 
 
 class JobsResource(ApiResource):
@@ -33,9 +33,6 @@ class JobsResource(ApiResource):
         job = Job.build_job_from_dict(body)
         Job.save_job(job)
 
-        # TODO(jmv): Figure out scheduling of jobs
-        # execute_job.delay(job.id)
-
         resp.status = falcon.HTTP_201
         resp.body = self.format_response_body({'job_id': job.id})
 
@@ -44,12 +41,22 @@ class JobsResource(ApiResource):
         resp.body = self.format_response_body({'jobs': jobs_list})
 
 
-class GetJobResource(ApiResource):
+class JobResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id, job_id):
         job = Job.get_job(job_id)
         if job:
             resp.body = self.format_response_body(job.as_dict())
+        else:
+            msg = 'Cannot find job: {job_id}'.format(job_id=job_id)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
+
+    def on_head(self, req, resp, tenant_id, job_id):
+        job = Job.get_job(job_id)
+        if job:
+            # TODO(jmv): Figure out scheduling of jobs
+            execute_job.delay(job.id)
         else:
             msg = 'Cannot find job: {job_id}'.format(job_id=job_id)
             resp.status = falcon.HTTP_404

@@ -17,7 +17,7 @@ import falcon
 
 from rift import log
 from rift.api.version.resources import VersionResource
-from rift.api.resources import (JobsResource, GetJobResource, TenantsResource,
+from rift.api.resources import (JobsResource, JobResource, TenantsResource,
                                 TargetsResource, GetTargetResource)
 
 LOG = log.get_logger()
@@ -31,7 +31,7 @@ class App(falcon.API):
 
         version = VersionResource()
         jobs = JobsResource()
-        get_job = GetJobResource()
+        get_job = JobResource()
         tenants = TenantsResource()
         targets = TargetsResource()
         get_target = GetTargetResource()

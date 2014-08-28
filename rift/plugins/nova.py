@@ -17,10 +17,8 @@ from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import ActionResource
 
 
-class NovaSoftReboot(ActionResource, AbstractPlugin):
-    API_HELP = """
-    This plugin just requires a target and authentication.
-    """
+class NovaSoftReboot(AbstractPlugin, ActionResource):
+    API_HELP = """This plugin just requires a target and authentication."""
 
     def get_name(self):
         return 'nova-soft-reboot'

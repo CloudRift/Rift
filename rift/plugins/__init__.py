@@ -13,20 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import json
+
 from falcon import HTTP_200
 from abc import ABCMeta, abstractmethod
 
 
 class AbstractPlugin():
     __metaclass__ = ABCMeta
-    API_HELP = """
-    Add an API_HELP attribute to your plugin class to allow
-    users to better understand how they should use your plugin.
-    """
+    API_HELP = """Add an API_HELP attribute to your plugin class to allow
+users to better understand how they should use your plugin.
+"""
 
     def on_get(self, req, resp):
         resp.status = HTTP_200
-        resp.body = self.API_HELP
+        resp.body = json.dumps({'help': self.API_HELP})
 
     @abstractmethod
     def get_name(self):

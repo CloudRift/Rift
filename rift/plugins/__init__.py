@@ -31,12 +31,8 @@ users to better understand how they should use your plugin.
 
     @abstractmethod
     def get_name(self):
-        return ''
+        raise NotImplementedError()  # pragma: no cover
 
     @abstractmethod
     def execute_action(self, action):
-        pass
-
-    # @abstractmethod
-    # def on_post(self, req, resp):
-    #    pass
+        raise NotImplementedError()  # pragma: no cover

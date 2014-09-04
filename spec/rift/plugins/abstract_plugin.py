@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import json
+
 from specter import Spec, expect
 from falcon import HTTP_200, Response
 from rift.plugins import AbstractPlugin
@@ -50,5 +52,7 @@ class TestAbstractPlugin(Spec):
         resp, req = Response(), object()
 
         plugin.on_get(req=req, resp=resp)
+        json_body = json.loads(resp.body)
+
         expect(resp.status).to.equal(HTTP_200)
-        expect(resp.body).to.equal(AbstractPlugin.API_HELP)
+        expect(json_body['help']).to.equal(AbstractPlugin.API_HELP)

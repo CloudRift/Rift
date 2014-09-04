@@ -1,7 +1,7 @@
 Rift
 ====
 
-[![Build Status](https://travis-ci.org/CloudRift/Rift.svg?branch=master)](https://travis-ci.org/CloudRift/Rift) [![Coverage Status](https://img.shields.io/coveralls/CloudRift/Rift.svg)](https://coveralls.io/r/CloudRift/Rift?branch=master)
+[![Build Status](https://travis-ci.org/CloudRift/Rift.svg?branch=master)](https://travis-ci.org/CloudRift/Rift) [![Coverage Status](https://img.shields.io/coveralls/CloudRift/Rift.svg)](https://coveralls.io/r/CloudRift/Rift?branch=master) [![License: Apache v2](http://img.shields.io/badge/license-Apache%20v2-blue.svg])
 
 Rift is a service that enables you to conduct automated reliablity testing against your application's environments.
 

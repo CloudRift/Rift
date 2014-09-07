@@ -6,7 +6,7 @@ A RiftConfiguration object is created once and is provided by reference to
 other modules through the get_config module.
 """
 
-from ConfigParser import ConfigParser
+from six.moves.configparser import ConfigParser
 import os.path
 
 _CONFIG_FILE = '/opt/cloudrift/etc/rift/rift.conf'

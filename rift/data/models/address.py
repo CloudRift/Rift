@@ -56,7 +56,7 @@ class Address(object):
         supported = [NovaAddress, IpAddress, HostnameAddress]
 
         # We only support one address at a time (right now)
-        address_type, address_val = address_dict.items()[0]
+        address_type, address_val = list(address_dict.items())[0]
 
         address_child = None
         for supported_cls in supported:

@@ -5,7 +5,7 @@ _db_handler = mongodb.MongoDB()
 
 try:
     _db_handler.connect()
-except Exception, e:
+except Exception as e:
     log.get_logger().error("Problem connecting to MongoDB: %s", e)
 
 

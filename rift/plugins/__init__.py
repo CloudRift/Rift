@@ -34,5 +34,5 @@ users to better understand how they should use your plugin.
         raise NotImplementedError()  # pragma: no cover
 
     @abstractmethod
-    def execute_action(self, action):
+    def execute_action(self, job, action):
         raise NotImplementedError()  # pragma: no cover

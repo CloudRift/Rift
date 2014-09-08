@@ -57,6 +57,6 @@ def execute_job(job_id):
         plugin = get_action_plugin(ACTION_PLUGINS, action.action_type)
 
         if plugin:
-            plugin.execute_action(action)
+            plugin.execute_action(job, action)
         else:
             print 'Failed to execute action: ', action.action_type

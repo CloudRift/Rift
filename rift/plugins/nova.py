@@ -26,5 +26,5 @@ class NovaSoftReboot(AbstractPlugin, ActionResource):
     def on_post(self, req, resp):
         super(NovaSoftReboot, self).on_post(req, resp)
 
-    def execute_action(self, action):
+    def execute_action(self, job, action):
         pass

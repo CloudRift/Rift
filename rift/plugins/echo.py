@@ -15,6 +15,7 @@ limitations under the License.
 """
 from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import ActionResource
+from rift.data.models.target import Target
 
 
 class EchoPlugin(AbstractPlugin, ActionResource):
@@ -26,9 +27,13 @@ class EchoPlugin(AbstractPlugin, ActionResource):
     def on_post(self, req, resp):
         super(EchoPlugin, self).on_post(req, resp)
 
-    def execute_action(self, action):
+    def execute_action(self, job, action):
         # TODO: Replace with actual logging
         print('Executing a sample action')
-        print('Targets: {0}'.format(action.targets))
+        print('Tenant ID: {0}'.format(job.tenant_id))
+        print('Target IDs: {0}'.format(action.targets))
+        targets = [Target.get_target(job.tenant_id, target_id)
+                   for target_id in action.targets]
+        print('Targets: {0}'.format(targets))
         print('Type: {0}'.format(action.action_type))
         print('Params: {0}'.format(action.parameters))

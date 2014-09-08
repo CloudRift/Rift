@@ -23,7 +23,7 @@ class ServiceControl(ActionResource, AbstractPlugin):
     def get_name(self):
         return 'service'
 
-    def execute_action(self, action):
+    def execute_action(self, job, action):
         subprocess.call(
             [
                 'ansible',

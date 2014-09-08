@@ -1,0 +1,41 @@
+# These keys were generated specifically for unit testing the integration
+# with Paramiko. These keys shouldn't be used for anything else EVER!
+
+GARBAGE_PRIVATE_KEY_FOR_TEST = """
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEA+drh46wuORXMBxj8poSbHFrraYdIpiMsjvC7voZVnpDlX64j
+E3tNxJUsYu4eGXwmyg5yfwYH9mBwMGOknecuqPX7zTwsZVRKdrDXwLjL1mdM6nSK
+KNEkCWzIpsKMvt+5pcMtjPqFT+Dtm9+f7wSWtgNRjNgeEPPqy3fmMIKGmv5/og55
+mrmetXtZ3CMoZJ3g2CNkeN8wk2kq/Z6sATukGCJZ2gWDniYIJA3tNh411Uedgv2o
+iNAkRzlcAg0Af53Bp8TlvroMDmTb4Fs/1AZyjEMaWpPXze+xGhFj8sjRycskCSmL
+kFCI/aOgkgYqGdMHY3BfGbuBhFtIJ9LMmr+iEwIDAQABAoIBABTXsH5Ij7aNXe69
+o93UNAhCgV7VPTc2ufHWnSLAnAXVOn0nzp9CavNaKlC6YmJn2+iBGgYEn8dqthEj
+TskpTtgjZPTy7xUo2elayTS3dbGV/nGUdS4AfEwY+ggHNKx7h0YPqQ4Ym+RU9B1L
+o1DSBix6zGO+Z4usfUqp3tbvHIFzTUpK2xNqElvKJpwCNflDCUR+4X/QEvj5m/Np
+CS94RC+gXBlsAkzC0lwx6sb5YZs4QEUO7aodEzMQypFzVwpv/L4PDR4hXW9hYND4
+4X8i4WTbuT7MPUSMlEEXuhXWhpDy+uZIMcGLKbncKLfL2X/e6DpZKYibLQRZt8bm
+3ZmL2CECgYEA/fkLEuHj0E4xUL3JYXsAC3nT8OftRHqqvWG68aKKVDiOqdMB24AO
+mQesejNB2baWa2Xz0rUL68lsdLdCediWBZZg8p6mA4qs3ohlzDTzHOSfWcs7WpHv
+XQ1yTjMeNaaGmq0IOQT4t9LQXAS0PS+iYqUmGnjMZCOhMfghRWaQSoMCgYEA+9ls
+yk8kHFRA+rxB/XF1obGniDsh1fIJun87f+gnYKRo2rJM3AMRJ1M/jFlvdhSVl5Jg
+SjBawL/rc5Kgi+hODzq/cLSKzi5E7YvzRpLWD5FkQC8wNyUoO87/rfR1QXWoGLrn
+BZLuxdWPS6v2+YYyUxzodAcfdQ8e8d3nitZG9TECgYEAshZnGHeDarbZx9c9FfjN
+AD8OSdgnvSQTA7c7AmNKgmIiT50hqUwzcEU8QXgdzc9FzMtx3KeNU2orffBfUdd4
+4zQeiSKMIOGl9GlKkJX0f6ckwi9LUGgSo3phU8pufYpmyqFYqbr9uNC/wDagOGNl
+h6xsepWIJRQC3Woz0lloBocCgYEAnfnbkOeluhNrkxwFtMm3xM5gTUbySXaCfbaT
+hv8DvE5E63HOXm+aEfXZNdtf3Ey7LRGHTuIX+zInqh4+kKQOWuU58qN9Mim52Nvh
+pNI0bh2AKfavoteu7h1BKkfeSUpZP/H1OfzZw8TbFtdum0R/Sr0mXqmdJNtwSL0u
+IVuZtPECgYEAknufKBfplU/bMghYPV4vk5Jo98Ou07ZRrddi1udkkdCtkw1mbGGo
+0XcQUbLLVqJNduU3x8bvPAlVa4KigduNlsA5o3yxbNmz9uuGZoJ0Bo2zzDe0UNDY
+B6+f2wzTdQ8oI/9I8Ar3mdc/bj5KixVHAjSLkDSeIJ7RjtqgMEWSbpc=
+-----END RSA PRIVATE KEY-----
+"""
+
+GARBAGE_PUBLIC_KEY_FOR_TEST = (
+    'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD52uHjrC45FcwHGPymhJscWutph0im'
+    'IyyO8Lu+hlWekOVfriMTe03ElSxi7h4ZfCbKDnJ/Bgf2YHAwY6Sd5y6o9fvNPCxlVEp2s'
+    'NfAuMvWZ0zqdIoo0SQJbMimwoy+37mlwy2M+oVP4O2b35/vBJa2A1GM2B4Q8+rLd+Ywgoa'
+    'a/n+iDnmauZ61e1ncIyhkneDYI2R43zCTaSr9nqwBO6QYIlnaBYOeJggkDe02HjXVR52C/a'
+    'iI0CRHOVwCDQB/ncGnxOW+ugwOZNvgWz/UBnKMQxpak9fN77EaEWPyyNHJyyQJKYuQUIj9'
+    'o6CSBioZ0wdjcF8Zu4GEW0gn0syav6IT your_email@example.com'
+)

@@ -19,7 +19,8 @@ setup(
         "falcon",
         "uwsgi",
         "pynsive>=0.2.7",
-        "pymongo"
+        "pymongo",
+        "paramiko"
     ],
     zip_safe=False,
     include_package_data=True,

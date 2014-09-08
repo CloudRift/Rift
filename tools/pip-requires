@@ -3,3 +3,4 @@ uwsgi
 pynsive>=0.2.7
 pymongo
 celery
+paramiko

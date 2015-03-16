@@ -56,3 +56,6 @@ class ApiResource(object):
 
     def on_post(self, req, resp):
         resp.status = falcon.HTTP_404
+
+    def on_delete(self, req, resp):
+        resp.status = falcon.HTTP_404

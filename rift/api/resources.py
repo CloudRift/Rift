@@ -57,10 +57,14 @@ class JobResource(ApiResource):
         if job:
             # TODO(jmv): Figure out scheduling of jobs
             execute_job.delay(job.id)
+            resp.status = falcon.HTTP_200
         else:
             msg = 'Cannot find job: {job_id}'.format(job_id=job_id)
             resp.status = falcon.HTTP_404
             resp.body = json.dumps({'description': msg})
+
+    def on_delete(self, req, resp, tenant_id, job_id):
+        Job.delete_job(job_id=job_id)
 
 
 class TenantsResource(ApiResource):
@@ -119,7 +123,7 @@ class TargetsResource(ApiResource):
         resp.body = self.format_response_body({'targets': target_list})
 
 
-class GetTargetResource(ApiResource):
+class TargetResource(ApiResource):
 
     def on_get(self, req, resp, tenant_id, target_id):
         target = Target.get_target(tenant_id, target_id)
@@ -129,3 +133,6 @@ class GetTargetResource(ApiResource):
             msg = 'Cannot find target: {target_id}'.format(target_id=target_id)
             resp.status = falcon.HTTP_404
             resp.body = json.dumps({'description': msg})
+
+    def on_delete(self, req, resp, tenant_id, target_id):
+        Target.delete_target(target_id=target_id)

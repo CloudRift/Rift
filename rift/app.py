@@ -18,7 +18,7 @@ import falcon
 from rift import log
 from rift.api.version.resources import VersionResource
 from rift.api.resources import (JobsResource, JobResource, TenantsResource,
-                                TargetsResource, GetTargetResource)
+                                TargetsResource, TargetResource)
 
 LOG = log.get_logger()
 
@@ -34,7 +34,7 @@ class App(falcon.API):
         get_job = JobResource()
         tenants = TenantsResource()
         targets = TargetsResource()
-        get_target = GetTargetResource()
+        get_target = TargetResource()
 
         self.add_route('/', version)
         self.add_route('/v1/{tenant_id}', tenants)

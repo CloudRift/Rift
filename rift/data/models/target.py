@@ -79,3 +79,11 @@ class Target(object):
 
         return [Target.build_target_from_dict(tenant_id, target)
                 for target in targets_dict]
+
+    @classmethod
+    def delete_target(cls, target_id, handler=None):
+        db_handler = handler or get_handler()
+        db_handler.delete_document(
+            object_name=TARGET_COLLECTION,
+            query_filter={"id": target_id}
+        )

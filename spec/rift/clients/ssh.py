@@ -15,7 +15,7 @@ def create_paramiko_client_stub(connect_rtn=None, policy_rtn=None,
 
     connect = lambda **kwargs: connect_rtn
     close = lambda: close_rtn
-    exec_command = lambda command: (None, stdout, stderr)
+    exec_command = lambda command, get_pty: (None,  stdout, stderr)
     set_missing_host_key_policy = lambda policy: policy_rtn
 
     client_stub = stub(

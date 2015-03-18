@@ -13,22 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import subprocess
-from rift.plugins import AbstractPlugin
 from rift.api.worker.resources import ActionResource
+from rift.clients.ssh import SSHClient, SSHKeyCredentials
+from rift.data.models.target import Target
+from rift.plugins import AbstractPlugin
 
 
-class ServiceControl(ActionResource, AbstractPlugin):
+class ServicePlugin(AbstractPlugin, ActionResource):
 
     def get_name(self):
         return 'service'
 
     def execute_action(self, job, action):
-        subprocess.call(
-            [
-                'ansible',
-                'web[0]',
-                '-m', 'service',
-                '-a', 'name=apache2 state=stopped',
-            ]
-        )
+        service_name = action.parameters.get('service-name')
+        service_action = action.parameters.get('action')
+        if service_action == 'pkill':
+            cmd = 'sudo pkill {service_name}'.format(service_name=service_name)
+        else:
+            cmd = 'sudo service {service_name} {action} '.format(
+                service_name=service_name, action=service_action)
+
+        for target_id in action.targets:
+            target = Target.get_target(job.tenant_id, target_id)
+            ssh = target.authentication.get('ssh')
+            creds = SSHKeyCredentials(username=ssh.get('username'),
+                                      key_contents=ssh.get('private_key'))
+            ip = target.address.address_child
+            client = SSHClient(host=ip.address, port=ip.port,
+                               credentials=creds)
+            client.connect()
+            print client.execute(command=cmd)
+            client.close()

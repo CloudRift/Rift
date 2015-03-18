@@ -17,7 +17,7 @@ from pynsive import rlist_classes
 
 from rift import task_queue
 from rift.plugins import AbstractPlugin
-from rift.data.model import Job
+from rift.data.models.job import Job
 
 
 def get_action_plugin(action_plugins, name):

@@ -79,7 +79,7 @@ class SSHClient(BaseClient):
         return self
 
     def execute(self, command):
-        stdin, stdout, stderr = self.client.exec_command(command)
+        stdin, stdout, stderr = self.client.exec_command(command, get_pty=True)
         return (stdout.readlines(), stderr.readlines())
 
     def close(self):

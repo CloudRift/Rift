@@ -9,9 +9,12 @@ other modules through the get_config module.
 from six.moves.configparser import ConfigParser
 import os.path
 
-_CONFIG_FILE = '/opt/cloudrift/etc/rift/rift.conf'
+_CONFIG_FILE = '/etc/rift/rift.conf'
 
 _CFG_DEFAULTS = {
+    'general': {
+        'key_file': '/etc/rift/secret.key'
+    },
     'logging': {
         'log_level': 'DEBUG'
     },

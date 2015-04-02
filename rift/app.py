@@ -16,6 +16,7 @@ limitations under the License.
 import falcon
 
 from rift import log
+from rift.data import common
 from rift.api.version.resources import VersionResource
 from rift.api.resources import (JobsResource, JobResource, TenantsResource,
                                 TargetsResource, TargetResource)
@@ -28,6 +29,9 @@ class App(falcon.API):
         super(App, self).__init__()
 
         LOG.info('Starting Rift...')
+
+        # Make sure we can load an encryption key
+        common.get_secret_key()
 
         version = VersionResource()
         jobs = JobsResource()

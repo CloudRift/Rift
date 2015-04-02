@@ -4,3 +4,4 @@
 *.iml
 .tox
 *.egg-info
+*secret.key

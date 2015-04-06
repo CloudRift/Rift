@@ -23,8 +23,12 @@ class VersionResource(ApiResource):
 
     def get_version_dict(self):
         body = {
-            'current': version.__version_api__,
-            'build': version.__version__
+            'versions': {
+                version.__version_api__: {
+                    'build': version.__version__,
+                    'status': 'current'
+                }
+            }
         }
         return body
 

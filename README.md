@@ -18,8 +18,9 @@ If installing the service on Ubuntu 14.04, you will need the following packages.
 Installation
 ============
 
-1. Check out the project and install the dependencies in the tools/pip-requires and tools/test-requires. It is
-recommended that you use a virtual environment to isolate Rift from other python applications on your system.
+1. Check out the project and install the dependencies in the requirements.txt
+and test-requirements.txt. It is recommended that you use a virtual environment
+to isolate Rift from other python applications on your system.
 
 2. Start MongoDB and RabbitMQ Docker containers
 

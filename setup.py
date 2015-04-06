@@ -17,7 +17,7 @@ setup(
     ],
     install_requires=[
         "falcon",
-        "uwsgi",
+        "gunicorn",
         "pynsive>=0.2.7",
         "pymongo",
         "paramiko",

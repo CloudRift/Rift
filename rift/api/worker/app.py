@@ -13,14 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from multiprocessing import Process
+import falcon
 
-from rift.app import App
 from rift.api.worker.resources import AvailableActionsResource
-from rift import task_queue, actions
+from rift.config import get_config
+from rift import actions, task_queue
+
+conf = get_config()
 
 
-class WorkerApp(App):
+class WorkerApp(falcon.API):
 
     def __init__(self):
         super(WorkerApp, self).__init__()
@@ -34,6 +36,5 @@ class WorkerApp(App):
             self.add_route(route_name, action)
 
 
-celery_proc = Process(target=task_queue.celery.worker_main)
-celery_proc.start()
 application = WorkerApp()
+celery = task_queue.celery

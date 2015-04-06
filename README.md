@@ -21,8 +21,12 @@ Installation
 1. Check out the project and install the dependencies in the tools/pip-requires and tools/test-requires. It is
 recommended that you use a virtual environment to isolate Rift from other python applications on your system.
 
-2. Run uwsgi:
+2. Start MongoDB and RabbitMQ Docker containers
 
-    uwsgi --ini uwsgi.ini
+    ```bin/containers.sh start```
 
-3. Rift should be running on port 8080
+2. Start service:
+
+    ```bin/rift.sh start```
+
+3. Rift should be running on port 8000

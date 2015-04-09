@@ -37,36 +37,14 @@ class TestServicePlugin(Spec):
         )
 
     @patch('paramiko.SSHClient')
-    def can_pkill_a_process(self, ssh_client):
+    def can_execute_a_command(self, ssh_client):
         ssh_client.return_value = self.paramiko_stub
 
         action = Action(
             targets=['test_id'],
             action_type='service',
             parameters={
-                'service-name': 'nothing',
-                'action': 'pkill'
-            }
-        )
-
-        with patch('rift.data.models.target.Target.get_target') as g:
-            g.return_value = self.target
-            self.plugin.execute_action(self.job, action)
-
-        expect(len(self.paramiko_stub.connect.calls)).to.equal(1)
-        expect(len(self.paramiko_stub.exec_command.calls)).to.equal(1)
-        expect(len(self.paramiko_stub.close.calls)).to.equal(1)
-
-    @patch('paramiko.SSHClient')
-    def can_stop_a_service(self, ssh_client):
-        ssh_client.return_value = self.paramiko_stub
-
-        action = Action(
-            targets=['test_id'],
-            action_type='service',
-            parameters={
-                'service-name': 'nothing',
-                'action': 'stop'
+                'command': 'some-command'
             }
         )
 

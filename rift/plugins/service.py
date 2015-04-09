@@ -58,6 +58,7 @@ class ServicePlugin(AbstractPlugin, ActionResource):
                 credentials=creds
             )
             client.connect()
-            client.execute(command=cmd)
+            LOG.info('Service plugin executing command: %s', cmd)
+            resp = client.execute(command=cmd)
             client.close()
-            LOG.info('Service plugin execution successful: %s', cmd)
+            LOG.info('Service plugin execution response: %s', resp)

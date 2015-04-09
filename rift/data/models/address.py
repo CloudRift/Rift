@@ -21,7 +21,7 @@ class IpAddress(object):
 
     def __init__(self, address=None, port=None):
         self.address = address
-        self.port = port
+        self.port = int(port)
 
     def as_dict(self):
         return {

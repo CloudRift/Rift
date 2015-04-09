@@ -22,10 +22,10 @@ from rift.plugins import AbstractPlugin
 LOG = log.get_logger()
 
 
-class ServicePlugin(AbstractPlugin, ActionResource):
+class RemoteCommandPlugin(AbstractPlugin, ActionResource):
 
     def get_name(self):
-        return 'service'
+        return 'remote-command'
 
     def execute_action(self, job, action):
         cmd = action.parameters.get('command')
@@ -45,7 +45,7 @@ class ServicePlugin(AbstractPlugin, ActionResource):
                 credentials=creds
             )
             client.connect()
-            LOG.info('Service plugin executing command: %s', cmd)
+            LOG.info('Remote command plugin executing: %s', cmd)
             resp = client.execute(command=cmd)
             client.close()
-            LOG.info('Service plugin execution response: %s', resp)
+            LOG.info('Remote command plugin execution response: %s', resp)

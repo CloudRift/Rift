@@ -6,13 +6,13 @@ from spec.rift.clients import GARBAGE_PRIVATE_KEY_FOR_TEST
 from spec.rift.clients.ssh import create_paramiko_client_stub
 from rift.data.models.action import Action
 from rift.data.models.target import Target
-from rift.plugins import service
+from rift.plugins import remote_command
 
 
-class TestServicePlugin(Spec):
+class TestRemoteCommandPlugin(Spec):
 
     def before_each(self):
-        self.plugin = service.ServicePlugin()
+        self.plugin = remote_command.RemoteCommandPlugin()
         self.job = stub(tenant_id=lambda: 'test_tenant')
         self.paramiko_stub = create_paramiko_client_stub()
         self.target = Target.build_target_from_dict(
@@ -37,36 +37,14 @@ class TestServicePlugin(Spec):
         )
 
     @patch('paramiko.SSHClient')
-    def can_pkill_a_process(self, ssh_client):
+    def can_execute_a_command(self, ssh_client):
         ssh_client.return_value = self.paramiko_stub
 
         action = Action(
             targets=['test_id'],
-            action_type='service',
+            action_type='remote-command',
             parameters={
-                'service-name': 'nothing',
-                'action': 'pkill'
-            }
-        )
-
-        with patch('rift.data.models.target.Target.get_target') as g:
-            g.return_value = self.target
-            self.plugin.execute_action(self.job, action)
-
-        expect(len(self.paramiko_stub.connect.calls)).to.equal(1)
-        expect(len(self.paramiko_stub.exec_command.calls)).to.equal(1)
-        expect(len(self.paramiko_stub.close.calls)).to.equal(1)
-
-    @patch('paramiko.SSHClient')
-    def can_stop_a_service(self, ssh_client):
-        ssh_client.return_value = self.paramiko_stub
-
-        action = Action(
-            targets=['test_id'],
-            action_type='service',
-            parameters={
-                'service-name': 'nothing',
-                'action': 'stop'
+                'command': 'some-command'
             }
         )
 
@@ -79,4 +57,4 @@ class TestServicePlugin(Spec):
         expect(len(self.paramiko_stub.close.calls)).to.equal(1)
 
     def plugin_returns_a_name(self):
-        expect(self.plugin.get_name()).to.equal('service')
+        expect(self.plugin.get_name()).to.equal('remote-command')

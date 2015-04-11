@@ -22,26 +22,13 @@ from rift.plugins import AbstractPlugin
 LOG = log.get_logger()
 
 
-class ServicePlugin(AbstractPlugin, ActionResource):
+class RemoteCommandPlugin(AbstractPlugin, ActionResource):
 
     def get_name(self):
-        return 'service'
-
-    def _build_command(self, service_name, service_action):
-        if service_action == 'pkill':
-            cmd = 'sudo pkill {service_name}'.format(service_name=service_name)
-        else:
-            cmd = 'sudo service {service_name} {action} '.format(
-                service_name=service_name,
-                action=service_action
-            )
-        return cmd
+        return 'remote-command'
 
     def execute_action(self, job, action):
-        service_name = action.parameters.get('service-name')
-        service_action = action.parameters.get('action')
-
-        cmd = self._build_command(service_name, service_action)
+        cmd = action.parameters.get('command')
 
         for target_id in action.targets:
             target = Target.get_target(job.tenant_id, target_id)
@@ -58,6 +45,7 @@ class ServicePlugin(AbstractPlugin, ActionResource):
                 credentials=creds
             )
             client.connect()
-            client.execute(command=cmd)
+            LOG.info('Remote command plugin executing: %s', cmd)
+            resp = client.execute(command=cmd)
             client.close()
-            LOG.info('Service plugin execution successful: %s', cmd)
+            LOG.info('Remote command plugin execution response: %s', resp)

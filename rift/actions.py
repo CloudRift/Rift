@@ -34,8 +34,8 @@ def load_plugins():
             plugin = plugin_type()
             plugins.append(plugin)
         except TypeError as error:
-            print 'Could not load plugin: {type}\n * {error}'.format(
-                type=plugin_type, error=error)
+            print('Could not load plugin: {type}\n * {error}'.format(
+                  type=plugin_type, error=error))
     return plugins
 
 
@@ -59,4 +59,4 @@ def execute_job(job_id):
         if plugin:
             plugin.execute_action(job, action)
         else:
-            print 'Failed to execute action: ', action.action_type
+            print('Failed to execute action: {0}'.format(action.action_type))

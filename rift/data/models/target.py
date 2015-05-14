@@ -60,6 +60,8 @@ class Target(object):
 
     @classmethod
     def encrypt_auth_data(cls, db_dict):
+        if not db_dict:
+            return
         key = common.get_secret_key()
         payload = json.dumps(db_dict['authentication'])
         encryptor = Fernet(key)
@@ -69,6 +71,8 @@ class Target(object):
 
     @classmethod
     def decrypt_auth_data(cls, db_dict):
+        if not db_dict:
+            return
         key = common.get_secret_key()
         token = b'{0}'.format(db_dict['authentication'])
         decryptor = Fernet(key)
@@ -95,6 +99,11 @@ class Target(object):
         target_dict = db_handler.get_document(
             object_name=TARGET_COLLECTION,
             query_filter={"id": target_id})
+
+        if not target_dict:
+            target_dict = db_handler.get_document(
+                object_name=TARGET_COLLECTION,
+                query_filter={"name": target_id})
 
         target_dict = Target.decrypt_auth_data(target_dict)
 

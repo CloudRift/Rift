@@ -18,6 +18,9 @@ import falcon
 import json
 
 from rift.api.common.resources import ApiResource
+from rift.api.schemas import get_validator
+from rift.api.schemas.job import job_schema
+from rift.api.schemas.target import target_schema
 from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
@@ -26,8 +29,10 @@ from rift.actions import execute_job
 
 class JobsResource(ApiResource):
 
+    validator = get_validator(job_schema)
+
     def on_post(self, req, resp, tenant_id):
-        body = self.load_body(req)
+        body = self.load_body(req, self.validator)
         body['tenant_id'] = tenant_id
 
         job = Job.build_job_from_dict(body)
@@ -104,10 +109,12 @@ class TenantsResource(ApiResource):
 
 class TargetsResource(ApiResource):
 
+    validator = get_validator(target_schema)
+
     def on_post(self, req, resp, tenant_id):
         target_id = str(uuid.uuid4())
 
-        body = self.load_body(req)
+        body = self.load_body(req, self.validator)
         body['id'] = target_id
 
         target = Target.build_target_from_dict(tenant_id, body)

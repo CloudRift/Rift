@@ -59,7 +59,7 @@ class ApiResource(object):
         err_msg = "JSON validation failed"
         if error.path:
             err_msg += ": invalid value for key {0}".format(list(error.path))
-        err_msg += " - " + error.message
+        err_msg += " - {0}".format(error.message)
         return err_msg
 
     def on_get(self, req, resp):

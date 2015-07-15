@@ -1,5 +1,5 @@
 _action_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "targets": {
             "type": "array",
@@ -9,16 +9,16 @@ _action_schema = {
             "type": "string"
         },
         "parameters": {
-            "type": "object",
             "properties": {
                 "command": {"type": "string"},
             }
-        }
-    }
+        },
+    },
+    "required": ["targets", "type"],
 }
 
 job_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "name": {"type": "string"},
         "actions": {

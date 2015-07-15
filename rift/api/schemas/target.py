@@ -1,93 +1,94 @@
-"""
-{
-    "name": "Apache node 2",
-    "type": "cloud-server",
-    "address": {
-        "nova": {
-            "name": "apache-02.ord.dev",
-            "region": "DFW"
-            }
-        },
-    "authentication": {
-        "rackspace": {
-            "username": "your_username",
-            "api_key": "your_api_key"
-            }
-        }
-}
-"""
-
 _ip_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "ip": {
-            "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "address": {"type": "string"},
                 "port": {"type": "integer"},
-            }
+            },
+            "required": ["address", "port"],
         }
     }
 }
 
 _hostname_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "hostname": {
-            "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "address": {"type": "string"},
                 "port": {"type": "integer"},
-            }
+            },
+            "required": ["address", "port"],
         }
     }
 }
 
 _nova_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "nova": {
-            "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "name": {"type": "string"},
                 "region": {"type": "string"},
-            }
+            },
+            "required": ["name", "region"],
         }
     }
 }
 
 _rax_auth_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
-        "username": {"type": "string"},
-        "api_key": {"type": "string"},
+        "rackspace": {
+            "additionalProperties": False,
+            "properties": {
+                "username": {"type": "string"},
+                "api_key": {"type": "string"},
+            },
+            "required": ["username", "api_key"],
+        }
     }
 }
 
 _ssh_key_auth_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
-        "username": {"type": "string"},
-        "private_key": {"type": "string"},
-        "private_key_password": {"type": "string"},
+        "ssh": {
+            "additionalProperties": False,
+            "properties": {
+                "username": {"type": "string"},
+                "private_key": {"type": "string"},
+                "private_key_password": {"type": "string"},
+            },
+            "required": ["username", "private_key"],
+        }
     }
 }
 
 _ssh_password_auth_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
-        "username": {"type": "string"},
-        "password": {"type": "string"},
+        "ssh": {
+            "additionalProperties": False,
+            "properties": {
+                "username": {"type": "string"},
+                "password": {"type": "string"},
+            },
+            "required": ["username", "password"],
+        }
     }
 }
 
 target_schema = {
-    "type": "object",
+    "additionalProperties": False,
     "properties": {
         "name": {"type": "string"},
         "type": {"type": "string"},
         "address": {
-            "type": "object",
             "oneOf": [
                 _ip_schema,
                 _hostname_schema,
@@ -95,7 +96,6 @@ target_schema = {
             ]
         },
         "authentication": {
-            "type": "object",
             "oneOf": [
                 _rax_auth_schema,
                 _ssh_key_auth_schema,

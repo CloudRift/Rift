@@ -111,6 +111,13 @@ class TargetsResource(ApiResource):
         body['id'] = target_id
 
         target = Target.build_target_from_dict(tenant_id, body)
+        duplicate_target = Target.get_target(tenant_id, target_id=target.name)
+
+        if duplicate_target:
+            raise falcon.exceptions.HTTPConflict(
+                'Duplicate Target Name',
+                'Target names must be unique: {0}'.format(target.name))
+
         Target.save_target(target)
 
         resp.status = falcon.HTTP_201

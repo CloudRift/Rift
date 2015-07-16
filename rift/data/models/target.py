@@ -98,12 +98,7 @@ class Target(object):
         db_handler = get_handler()
         target_dict = db_handler.get_document(
             object_name=TARGET_COLLECTION,
-            query_filter={"id": target_id})
-
-        if not target_dict:
-            target_dict = db_handler.get_document(
-                object_name=TARGET_COLLECTION,
-                query_filter={"name": target_id})
+            query_filter={"$or": [{"id": target_id}, {"name": target_id}]})
 
         target_dict = Target.decrypt_auth_data(target_dict)
 

@@ -16,6 +16,8 @@ limitations under the License.
 import falcon
 import json
 
+from jsonschema.exceptions import ValidationError
+
 
 class ApiResource(object):
 
@@ -45,11 +47,20 @@ class ApiResource(object):
             self.abort(falcon.HTTP_400, 'Malformed JSON')
 
         if validator:
-            validation_result = validator.validate(obj)
-            if not validation_result[0]:
-                self.abort(falcon.HTTP_400, validation_result[1].message)
+            try:
+                validator.validate(obj)
+            except ValidationError as e:
+                err_msg = self._format_validation_error_message(e)
+                self.abort(falcon.HTTP_400, err_msg)
 
         return obj
+
+    def _format_validation_error_message(self, error):
+        err_msg = "JSON validation failed"
+        if error.path:
+            err_msg += ": invalid value for key {0}".format(list(error.path))
+        err_msg += " - {0}".format(error.message)
+        return err_msg
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_404

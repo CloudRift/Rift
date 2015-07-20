@@ -9,7 +9,7 @@ STATUS_CLOSED = 'CLOSED'
 conf = get_config()
 
 
-class MongoDB():
+class MongoDB(object):
     """
     An handler class to provide CRUD operations using MongoDB
     """

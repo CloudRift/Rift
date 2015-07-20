@@ -4,6 +4,7 @@ from webtest import TestApp
 import rift.data.handler
 import rift.data.adapters.mongodb
 
+
 @fixture
 class MockedDatabase(Spec):
 

@@ -210,3 +210,12 @@ VALID_TARGETS = {
         }
     }
 }
+
+VALID_SCHEDULES = {
+    'schedule_with_empty_entries': {
+        'body': {
+            "name": "a valid schedule with no entries",
+            "entries": [],
+        }
+    }
+}

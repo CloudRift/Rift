@@ -24,6 +24,7 @@ from rift.api.schemas.target import target_schema
 from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
+from rift.data.models.schedule import Schedule
 from rift.actions import execute_job
 
 
@@ -150,3 +151,40 @@ class TargetResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, target_id):
         Target.delete_target(target_id=target_id)
+
+
+class SchedulesResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id):
+        schedules_list = [
+            s.as_dict() for s in Schedule.get_schedules(tenant_id)
+        ]
+        resp.body = self.format_response_body({'schedules': schedules_list})
+
+    def on_post(self, req, resp, tenant_id):
+        schedule_id = str(uuid.uuid4())
+        # TODO: do validation
+        body = self.load_body(req)
+        body['id'] = schedule_id
+
+        schedule = Schedule.build_schedule_from_dict(tenant_id, body)
+
+        Schedule.save_schedule(schedule)
+
+        resp.status = falcon.HTTP_201
+        resp.body = self.format_response_body({'schedule_id': schedule_id})
+
+
+class ScheduleResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, schedule_id):
+        schedule = Schedule.get_schedule(tenant_id, schedule_id)
+        if schedule:
+            resp.body = self.format_response_body(schedule.as_dict())
+        else:
+            msg = 'Cannot find schedule: {0}'.format(schedule_id)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
+
+    def on_delete(self, req, resp, tenant_id, schedule_id):
+        Schedule.delete_schedule(schedule_id=schedule_id)

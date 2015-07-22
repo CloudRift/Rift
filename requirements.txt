@@ -6,3 +6,4 @@ celery
 paramiko
 cryptography
 jsonschema
+apache-libcloud

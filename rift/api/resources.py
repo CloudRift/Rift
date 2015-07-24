@@ -182,9 +182,23 @@ class ScheduleResource(ApiResource):
         if schedule:
             resp.body = self.format_response_body(schedule.as_dict())
         else:
-            msg = 'Cannot find schedule: {0}'.format(schedule_id)
-            resp.status = falcon.HTTP_404
-            resp.body = json.dumps({'description': msg})
+            self._not_found(resp, schedule_id)
+
+    def on_head(self, req, resp, tenant_id, schedule_id):
+        schedule = Schedule.get_schedule(tenant_id, schedule_id)
+        if schedule:
+            for entry in schedule.entries:
+                delay_seconds = entry.delay.get_total_seconds()
+                execute_job.apply_async((entry.job_id,),
+                                        countdown=delay_seconds)
+            resp.status = falcon.HTTP_200
+        else:
+            self._not_found(resp, schedule_id)
 
     def on_delete(self, req, resp, tenant_id, schedule_id):
         Schedule.delete_schedule(schedule_id=schedule_id)
+
+    def _not_found(self, resp, schedule_id):
+        msg = 'Cannot find schedule: {0}'.format(schedule_id)
+        resp.status = falcon.HTTP_404
+        resp.body = json.dumps({'description': msg})

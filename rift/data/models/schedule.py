@@ -104,6 +104,9 @@ class Delay(object):
             'hours': self.hours,
         }
 
+    def get_total_seconds(self):
+        return self.seconds + 60 * self.minutes + 3600 * self.hours
+
     @classmethod
     def build_delay_from_dict(cls, delay_dict):
         kwargs = {

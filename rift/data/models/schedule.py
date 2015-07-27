@@ -78,40 +78,13 @@ class Entry(object):
     def as_dict(self):
         return {
             'job_id': self.job_id,
-            'delay': self.delay.as_dict(),
+            'delay': self.delay,
         }
 
     @classmethod
     def build_entry_from_dict(cls, entry_dict):
         kwargs = {
             'job_id': entry_dict.get('job_id'),
-            'delay': Delay.build_delay_from_dict(entry_dict.get('delay')),
-        }
-        return cls(**kwargs)
-
-
-class Delay(object):
-
-    def __init__(self, seconds, minutes, hours):
-        self.seconds = seconds
-        self.minutes = minutes
-        self.hours = hours
-
-    def as_dict(self):
-        return {
-            'seconds': self.seconds,
-            'minutes': self.minutes,
-            'hours': self.hours,
-        }
-
-    def get_total_seconds(self):
-        return self.seconds + 60 * self.minutes + 3600 * self.hours
-
-    @classmethod
-    def build_delay_from_dict(cls, delay_dict):
-        kwargs = {
-            'seconds': delay_dict.get('seconds', 0),
-            'minutes': delay_dict.get('minutes', 0),
-            'hours': delay_dict.get('hours', 0),
+            'delay': entry_dict.get('delay'),
         }
         return cls(**kwargs)

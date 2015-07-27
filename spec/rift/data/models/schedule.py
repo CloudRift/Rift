@@ -2,7 +2,7 @@ import uuid
 
 from specter import Spec, expect, skip
 
-from rift.data.models.schedule import Schedule, Entry, Delay
+from rift.data.models.schedule import Schedule, Entry
 from spec.rift.api.resources.fixtures import MockedDatabase
 
 
@@ -12,11 +12,7 @@ example_schedule_dict = {
     'entries': [
         {
             "job_id": "job1",
-            "delay": {
-                "seconds": 3,
-                "minutes": 2,
-                "hours": 1,
-            }
+            "delay": 123,
         }
     ]
 }
@@ -25,6 +21,7 @@ example_schedule_dict = {
 class ScheduleModel(Spec):
 
     class Deserialization(Spec):
+
         def can_deserialize_from_a_dictionary(self):
             tenant_id = str(uuid.uuid4())
             schedule = Schedule.build_schedule_from_dict(
@@ -35,14 +32,12 @@ class ScheduleModel(Spec):
             expect(schedule.name).to.equal('my schedule')
 
             expect(schedule.entries[0].job_id).to.equal('job1')
-            expect(schedule.entries[0].delay.seconds).to.equal(3)
-            expect(schedule.entries[0].delay.minutes).to.equal(2)
-            expect(schedule.entries[0].delay.hours).to.equal(1)
+            expect(schedule.entries[0].delay).to.equal(123)
 
     class Serialization(Spec):
+
         def can_serialize_to_a_dictionary(self):
-            delay = Delay(seconds=1, minutes=2, hours=3)
-            entry = Entry(job_id='job1', delay=delay)
+            entry = Entry(job_id='job1', delay=123)
             schedule = Schedule(tenant_id='tenant1',
                                 schedule_id='schedule1',
                                 entries=[entry],
@@ -55,13 +50,10 @@ class ScheduleModel(Spec):
 
             e = schedule_dict['entries'][0]
             expect(e.get('job_id')).to.equal('job1')
-            expect(e.get('delay')).to.equal({
-                'seconds': 1,
-                'minutes': 2,
-                'hours': 3,
-            })
+            expect(e.get('delay')).to.equal(123)
 
     class DatabaseActions(MockedDatabase):
+
         def before_each(self):
             super(type(self), self).before_each()
             self.tenant_id = str(uuid.uuid4())
@@ -89,9 +81,3 @@ class ScheduleModel(Spec):
             found = Schedule.get_schedule(
                 self.tenant_id, self.schedule.schedule_id)
             expect(found).to.be_none()
-
-    class DelayModel(Spec):
-
-        def can_get_total_seconds(self):
-            delay = Delay(seconds=3, minutes=2, hours=1)
-            expect(delay.get_total_seconds()).to.equal(3723)

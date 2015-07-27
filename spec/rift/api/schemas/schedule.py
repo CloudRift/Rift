@@ -25,5 +25,3 @@ class ScheduleValidator(Spec):
             body = json.loads(body)
             validator = get_validator(schedule_schema)
             validator.validate(body)
-
-

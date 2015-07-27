@@ -21,6 +21,7 @@ from rift.api.common.resources import ApiResource
 from rift.api.schemas import get_validator
 from rift.api.schemas.job import job_schema
 from rift.api.schemas.target import target_schema
+from rift.api.schemas.schedule import schedule_schema
 from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
@@ -155,6 +156,8 @@ class TargetResource(ApiResource):
 
 class SchedulesResource(ApiResource):
 
+    validator = get_validator(schedule_schema)
+
     def on_get(self, req, resp, tenant_id):
         schedules_list = [
             s.as_dict() for s in Schedule.get_schedules(tenant_id)
@@ -163,8 +166,7 @@ class SchedulesResource(ApiResource):
 
     def on_post(self, req, resp, tenant_id):
         schedule_id = str(uuid.uuid4())
-        # TODO: do validation
-        body = self.load_body(req)
+        body = self.load_body(req, self.validator)
         body['id'] = schedule_id
 
         schedule = Schedule.build_schedule_from_dict(tenant_id, body)

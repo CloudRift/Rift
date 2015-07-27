@@ -213,9 +213,99 @@ VALID_TARGETS = {
 
 VALID_SCHEDULES = {
     'schedule_with_empty_entries': {
-        'body': {
+        'body': """{
             "name": "a valid schedule with no entries",
-            "entries": [],
-        }
+            "entries": []
+        }"""
+    },
+    'schedule_with_one_entry': {
+        'body': """{
+            "name": "a valid schedule with one entry",
+            "entries": [
+                {
+                    "job_id": "5e48c156-7550-485d-bcdc-227c2c20d120",
+                    "delay": 0
+                }
+            ]
+        }"""
+    },
+    'schedule_with_two_entries': {
+        'body': """{
+            "name": "a valid schedule with two entries",
+            "entries": [
+                {
+                    "job_id": "5e48c156-7550-485d-bcdc-227c2c20d120",
+                    "delay": 0
+                },
+                {
+                    "job_id": "f06f0ec2-bebf-492f-9a5e-1f8f18d5c277",
+                    "delay": 10
+                }
+            ]
+        }"""
+    },
+}
+
+INVALID_SCHEDULES = {
+    'schedule_with_missing_entries': {
+        'body': """{
+            "name": "a schedule missing the 'entries' key"
+        }"""
+    },
+    'schedule_with_missing_name': {
+        'body': """{
+            "entries": []
+        }"""
+    },
+    'schedule_without_delay': {
+        'body': """{
+            "name": "a schedule with a missing delay key",
+            "entries": [
+                {
+                    "job_id": "f06f0ec2-bebf-492f-9a5e-1f8f18d5c277"
+                }
+            ]
+        }"""
+    },
+    'schedule_with_negative_delay': {
+        'body': """{
+            "name": "a schedule with a missing delay key",
+            "entries": [
+                {
+                    "job_id": "f06f0ec2-bebf-492f-9a5e-1f8f18d5c277"
+                }
+            ]
+        }"""
+    },
+    'schedule_with_negative_delay': {
+        'body': """{
+            "name": "a schedule with a missing delay key",
+            "entries": [
+                {
+                    "job_id": "f06f0ec2-bebf-492f-9a5e-1f8f18d5c277",
+                    "delay": -1
+                }
+            ]
+        }"""
+    },
+    'schedule_without_job_id': {
+        'body': """{
+            "name": "a schedule with a missing delay key",
+            "entries": [
+                {
+                    "delay": -1
+                }
+            ]
+        }"""
+    },
+    'schedule_with_wrong_delay_datatype': {
+        'body': """{
+            "name": "a schedule with a missing delay key",
+            "entries": [
+                {
+                    "delay": "aaa"
+                }
+            ]
+        }"""
     }
 }

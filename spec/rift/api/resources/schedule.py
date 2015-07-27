@@ -1,9 +1,10 @@
+import json
 import uuid
 
-from specter import expect, require, skip
+from specter import DataSpec, expect, require, skip
 
 from spec.rift.api.resources.fixtures import MockedDatabase
-from spec.rift.api.datasets import VALID_SCHEDULES
+from spec.rift.api.datasets import VALID_SCHEDULES, INVALID_SCHEDULES
 
 
 class SchedulesResource(MockedDatabase):
@@ -52,7 +53,26 @@ class SchedulesResource(MockedDatabase):
 
     def _post_schedule(self):
         body = VALID_SCHEDULES['schedule_with_empty_entries']['body']
+        body = json.loads(body)
         resp = self.app.post_json('/v1/user/schedules', body)
         require(resp.status_int).to.equal(201)
         require(resp.json).to.contain('schedule_id')
         return resp
+
+    class SuccessfulPostRequests(MockedDatabase, DataSpec):
+        DATASET = VALID_SCHEDULES
+
+        def can_post_self(self, body):
+            body = json.loads(body)
+            resp = self.app.post_json('/v1/tenant/schedules', body)
+            require(resp.status_int).to.equal(201)
+            expect(resp.json).to.contain('schedule_id')
+
+    class BadPostRequests(MockedDatabase, DataSpec):
+        DATASET = INVALID_SCHEDULES
+
+        def returns_400_on_a(self, body):
+            body = json.loads(body)
+            resp = self.app.post_json('/v1/tenant/schedules', body,
+                                      expect_errors=True)
+            expect(resp.status_int).to.equal(400)

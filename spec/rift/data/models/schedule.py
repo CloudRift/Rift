@@ -1,6 +1,6 @@
 import uuid
 
-from specter import Spec, expect, skip
+from specter import Spec, DataSpec, expect, skip
 
 from rift.data.models.schedule import Schedule, Entry
 from spec.rift.api.resources.fixtures import MockedDatabase
@@ -81,3 +81,31 @@ class ScheduleModel(Spec):
             found = Schedule.get_schedule(
                 self.tenant_id, self.schedule.schedule_id)
             expect(found).to.be_none()
+
+    class Entry(DataSpec):
+        DATASET = {
+            'zero_delay': {
+                "delay": "00:00:00",
+                "result": 0,
+            },
+            'delay_with_nonzero_seconds': {
+                "delay": "00:00:93",
+                "result": 93,
+            },
+            'delay_with_nonzero_minutes': {
+                "delay": "00:84:00",
+                "result": 5040,
+            },
+            'delay_with_nonzero_hours': {
+                "delay": "67:00:00",
+                "result": 241200,
+            },
+            'delay_with_hours_minutes_and_seconds': {
+                "delay": "12:34:56",
+                "result": 45296,
+            },
+        }
+
+        def can_get_total_seconds_for(self, delay, result):
+            entry = Entry(job_id=str(uuid.uuid4()), delay=delay)
+            expect(entry.get_total_seconds()).to.equal(result)

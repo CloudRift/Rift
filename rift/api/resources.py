@@ -191,7 +191,7 @@ class ScheduleResource(ApiResource):
         if schedule:
             for entry in schedule.entries:
                 execute_job.apply_async((entry.job_id,),
-                                        countdown=entry.delay)
+                                        countdown=entry.get_total_seconds())
             resp.status = falcon.HTTP_200
         else:
             self._not_found(resp, schedule_id)

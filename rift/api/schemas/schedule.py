@@ -3,8 +3,8 @@ _entry_schema = {
     "properties": {
         "job_id": {"type": "string"},
         "delay": {
-            "type": "integer",
-            "minimum": 0
+            "type": "string",
+            "pattern": "[0-9]{2}:[0-9]{2}:[0-9]{2}",
         },
     },
     "required": ["job_id", "delay"],

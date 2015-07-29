@@ -88,3 +88,7 @@ class Entry(object):
             'delay': entry_dict.get('delay'),
         }
         return cls(**kwargs)
+
+    def get_total_seconds(self):
+        hours, minutes, seconds = map(int, self.delay.split(':'))
+        return hours * 3600 + minutes * 60 + seconds

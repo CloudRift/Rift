@@ -12,7 +12,7 @@ example_schedule_dict = {
     'entries': [
         {
             "job_id": "job1",
-            "delay": 123,
+            "delay": "01:02:03",
         }
     ]
 }
@@ -32,12 +32,12 @@ class ScheduleModel(Spec):
             expect(schedule.name).to.equal('my schedule')
 
             expect(schedule.entries[0].job_id).to.equal('job1')
-            expect(schedule.entries[0].delay).to.equal(123)
+            expect(schedule.entries[0].delay).to.equal("01:02:03")
 
     class Serialization(Spec):
 
         def can_serialize_to_a_dictionary(self):
-            entry = Entry(job_id='job1', delay=123)
+            entry = Entry(job_id='job1', delay="01:02:03")
             schedule = Schedule(tenant_id='tenant1',
                                 schedule_id='schedule1',
                                 entries=[entry],
@@ -50,7 +50,7 @@ class ScheduleModel(Spec):
 
             e = schedule_dict['entries'][0]
             expect(e.get('job_id')).to.equal('job1')
-            expect(e.get('delay')).to.equal(123)
+            expect(e.get('delay')).to.equal("01:02:03")
 
     class DatabaseActions(MockedDatabase):
 

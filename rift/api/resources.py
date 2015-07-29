@@ -21,9 +21,11 @@ from rift.api.common.resources import ApiResource
 from rift.api.schemas import get_validator
 from rift.api.schemas.job import job_schema
 from rift.api.schemas.target import target_schema
+from rift.api.schemas.schedule import schedule_schema
 from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
+from rift.data.models.schedule import Schedule
 from rift.actions import execute_job
 
 
@@ -150,3 +152,54 @@ class TargetResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, target_id):
         Target.delete_target(target_id=target_id)
+
+
+class SchedulesResource(ApiResource):
+
+    validator = get_validator(schedule_schema)
+
+    def on_get(self, req, resp, tenant_id):
+        schedules_list = [
+            s.as_dict() for s in Schedule.get_schedules(tenant_id)
+        ]
+        resp.body = self.format_response_body({'schedules': schedules_list})
+
+    def on_post(self, req, resp, tenant_id):
+        schedule_id = str(uuid.uuid4())
+        body = self.load_body(req, self.validator)
+        body['id'] = schedule_id
+
+        schedule = Schedule.build_schedule_from_dict(tenant_id, body)
+
+        Schedule.save_schedule(schedule)
+
+        resp.status = falcon.HTTP_201
+        resp.body = self.format_response_body({'schedule_id': schedule_id})
+
+
+class ScheduleResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, schedule_id):
+        schedule = Schedule.get_schedule(tenant_id, schedule_id)
+        if schedule:
+            resp.body = self.format_response_body(schedule.as_dict())
+        else:
+            self._not_found(resp, schedule_id)
+
+    def on_head(self, req, resp, tenant_id, schedule_id):
+        schedule = Schedule.get_schedule(tenant_id, schedule_id)
+        if schedule:
+            for entry in schedule.entries:
+                execute_job.apply_async((entry.job_id,),
+                                        countdown=entry.get_total_seconds())
+            resp.status = falcon.HTTP_200
+        else:
+            self._not_found(resp, schedule_id)
+
+    def on_delete(self, req, resp, tenant_id, schedule_id):
+        Schedule.delete_schedule(schedule_id=schedule_id)
+
+    def _not_found(self, resp, schedule_id):
+        msg = 'Cannot find schedule: {0}'.format(schedule_id)
+        resp.status = falcon.HTTP_404
+        resp.body = json.dumps({'description': msg})

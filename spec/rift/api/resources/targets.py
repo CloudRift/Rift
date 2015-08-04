@@ -27,6 +27,25 @@ class TargetsResource(MockedDatabase):
         expect(resp.json).to.contain('name')
         expect(resp.json['id']).to.equal(target_id)
 
+    def can_ping_nova_target(self):
+        post_resp = self._post_target()
+        target_id = post_resp.json['target_id']
+
+        resp = self.app.get('/v1/tenant/targets/{0}/ping'.format(target_id))
+        require(resp.status_int).to.equal(200)
+
+    def can_ping_ssh_target(self):
+        post_resp = self.app.post_json(
+            '/v1/tenant/targets',
+            VALID_TARGETS['hostname_target_with_ssh_password_auth']['body'])
+        expect(post_resp.status_int).to.equal(201)
+        expect(post_resp.json).to.contain('target_id')
+        target_id = post_resp.json['target_id']
+
+        resp = self.app.get('/v1/tenant/targets/{0}/ping'.format(target_id),
+                            expect_errors=True)
+        require(resp.status_int).to.be_in([200, 404])
+
     @skip('Fails - "not enough arguments for format string" in mongomock')
     def can_delete_target(self):
         post_resp = self._post_target()

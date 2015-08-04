@@ -16,6 +16,9 @@ limitations under the License.
 import uuid
 import falcon
 import json
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+import paramiko
 
 from rift.api.common.resources import ApiResource
 from rift.api.schemas import get_validator
@@ -26,6 +29,7 @@ from rift.data.models.job import Job
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
 from rift.data.models.schedule import Schedule
+from rift.clients.ssh import SSHClient, SSHKeyCredentials
 from rift.actions import execute_job
 
 
@@ -152,6 +156,57 @@ class TargetResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, target_id):
         Target.delete_target(target_id=target_id)
+
+
+class PingTargetResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, target_id):
+        target = Target.get_target(tenant_id, target_id)
+        if target:
+            # Nova
+            if 'nova' in target.address.as_dict().keys():
+                address = target.address.address_child
+
+                auth = target.authentication
+                try:
+                    if 'rackspace' in auth:
+                        cls = get_driver(Provider.RACKSPACE)
+                        cls(auth['rackspace']['username'],
+                            auth['rackspace']['api_key'],
+                            region=address.region.lower())
+                        resp.status = falcon.HTTP_200
+                    else:
+                        raise Exception("No supported providers in target: {0}"
+                                        .format(target.as_dict()))
+                except Exception:
+                    resp.status = falcon.HTTP_404
+            # SSH
+            else:
+                ip = target.address.address_child
+                ssh = target.authentication.get('ssh')
+
+                creds = SSHKeyCredentials(
+                    username=ssh.get('username'),
+                    key_contents=ssh.get('private_key')
+                )
+                client = SSHClient(
+                    host=ip.address,
+                    port=ip.port,
+                    credentials=creds
+                )
+                print "still here"
+                try:
+                    client.connect()
+                    print "I CONNECTED"
+                    resp.status = falcon.HTTP_200
+                    client.close()
+                except paramiko.SSHException:
+                    print "404 time"
+                    resp.status = falcon.HTTP_404
+        else:
+            msg = 'Cannot find target: {target_id}'.format(target_id=target_id)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
 
 
 class SchedulesResource(ApiResource):

@@ -163,9 +163,10 @@ class PingTargetResource(ApiResource):
     def on_get(self, req, resp, tenant_id, target_id):
         target = Target.get_target(tenant_id, target_id)
         if target:
+            address = target.address
             # Nova
-            if 'nova' in target.address.as_dict().keys():
-                address = target.address.address_child
+            if 'nova' in address.as_dict().keys():
+                nova_address = address.address_child
 
                 auth = target.authentication
                 try:
@@ -173,7 +174,7 @@ class PingTargetResource(ApiResource):
                         cls = get_driver(Provider.RACKSPACE)
                         cls(auth['rackspace']['username'],
                             auth['rackspace']['api_key'],
-                            region=address.region.lower())
+                            region=nova_address.region.lower())
                         resp.status = falcon.HTTP_200
                     else:
                         raise Exception("No supported providers in target: {0}"
@@ -182,7 +183,7 @@ class PingTargetResource(ApiResource):
                     resp.status = falcon.HTTP_404
             # SSH
             else:
-                ip = target.address.address_child
+                ip = address.address_child
                 ssh = target.authentication.get('ssh')
 
                 creds = SSHKeyCredentials(

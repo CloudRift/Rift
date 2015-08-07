@@ -26,6 +26,7 @@ from rift.api.schemas.job import job_schema
 from rift.api.schemas.target import target_schema
 from rift.api.schemas.schedule import schedule_schema
 from rift.data.models.job import Job
+from rift.data.models.job_execution import JobExecution
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
 from rift.data.models.schedule import Schedule
@@ -65,8 +66,15 @@ class JobResource(ApiResource):
 
     def on_head(self, req, resp, tenant_id, job_id):
         job = Job.get_job(job_id)
+        job_ex = JobExecution.build_job_from_dict(job.as_dict())
+
         if job:
             # TODO(jmv): Figure out scheduling of jobs
+            JobExecution.save_job(job_ex)
+            job.run_numbers.append(job_ex.run_number)
+            Job.update_job(job)
+            job = Job.get_job(job_id)
+
             execute_job.delay(job.id)
             resp.status = falcon.HTTP_200
         else:
@@ -76,6 +84,19 @@ class JobResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, job_id):
         Job.delete_job(job_id=job_id)
+
+
+class JobExecutionResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, job_id, run_number):
+        job_execution = JobExecution.get_job(run_number)
+        JobExecution.save_job(job_execution)
+        if job_execution:
+            resp.body = self.format_response_body(job_execution.as_dict())
+        else:
+            msg = 'Cannot find run number: {id}'.format(id=run_number)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
 
 
 class TenantsResource(ApiResource):

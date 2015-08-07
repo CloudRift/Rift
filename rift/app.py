@@ -21,7 +21,7 @@ from rift.api.version.resources import VersionResource
 from rift.api.resources import (JobsResource, JobResource, TenantsResource,
                                 TargetsResource, TargetResource,
                                 PingTargetResource, SchedulesResource,
-                                ScheduleResource)
+                                ScheduleResource, JobExecutionResource)
 
 LOG = log.get_logger()
 
@@ -38,6 +38,7 @@ class App(falcon.API):
         version = VersionResource()
         jobs = JobsResource()
         get_job = JobResource()
+        get_job_status = JobExecutionResource()
         tenants = TenantsResource()
         targets = TargetsResource()
         get_target = TargetResource()
@@ -49,6 +50,8 @@ class App(falcon.API):
         self.add_route('/v1/{tenant_id}', tenants)
         self.add_route('/v1/{tenant_id}/jobs', jobs)
         self.add_route('/v1/{tenant_id}/jobs/{job_id}', get_job)
+        self.add_route('/v1/{tenant_id}/jobs/{job_id}/history/{run_number}',
+                       get_job_status)
         self.add_route('/v1/{tenant_id}/targets', targets)
         self.add_route('/v1/{tenant_id}/targets/{target_id}', get_target)
         self.add_route('/v1/{tenant_id}/targets/{target_id}/ping', ping_target)

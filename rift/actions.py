@@ -18,6 +18,7 @@ from pynsive import rlist_classes
 from rift import task_queue
 from rift.plugins import AbstractPlugin
 from rift.data.models.job import Job
+from rift.data.models.job_execution import JobExecution
 
 
 def get_action_plugin(action_plugins, name):
@@ -48,10 +49,12 @@ ACTION_PLUGINS = load_plugins()
 
 
 @task_queue.celery.task
-def execute_job(job_id):
+def execute_job(job_id, run_number):
     job = Job.get_job(job_id)
     if not job:
         return
+
+    job_execution = JobExecution.get_job(run_number)
 
     for action in job.actions:
         plugin = get_action_plugin(ACTION_PLUGINS, action.action_type)
@@ -59,4 +62,10 @@ def execute_job(job_id):
         if plugin:
             plugin.execute_action(job, action)
         else:
+            job_execution.status = 'error'
+            JobExecution.update_job(job_execution)
             print('Failed to execute action: {0}'.format(action.action_type))
+
+    if job_execution.status == 'in-progress':
+        job_execution.status = 'complete'
+        JobExecution.update_job(job_execution)

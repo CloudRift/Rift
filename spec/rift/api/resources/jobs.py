@@ -1,4 +1,5 @@
 import json
+from mock import patch
 import uuid
 
 from specter import DataSpec, expect, require, skip
@@ -25,6 +26,23 @@ class JobsResource(MockedDatabase):
         expect(resp.json).to.contain('actions')
         expect(resp.json).to.contain('name')
         expect(resp.json['id']).to.equal(job_id)
+
+    @patch('rift.actions.execute_job.delay')
+    def can_get_job_status(self, execute_job):
+        post_resp = self._post_job()
+        job_id = post_resp.json['job_id']
+
+        self.app.head('/v1/tenant/jobs/{0}'.format(job_id))
+
+        job_resp = self.app.get('/v1/tenant/jobs/{0}'.format(job_id))
+        run_number = job_resp.json['run_numbers'][0]
+
+        resp = self.app.get('/v1/tenant/jobs/{0}/history/{1}'
+                            ''.format(job_id, run_number))
+
+        expect(resp.json).to.contain('id')
+        expect(resp.json).to.contain('run_number')
+        expect(resp.json).to.contain('status')
 
     @skip('Fails - "not enough arguments for format string" in mongomock')
     def can_delete_job(self):

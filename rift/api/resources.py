@@ -16,6 +16,9 @@ limitations under the License.
 import uuid
 import falcon
 import json
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+from paramiko import SSHException
 
 from rift.api.common.resources import ApiResource
 from rift.api.schemas import get_validator
@@ -23,9 +26,11 @@ from rift.api.schemas.job import job_schema
 from rift.api.schemas.target import target_schema
 from rift.api.schemas.schedule import schedule_schema
 from rift.data.models.job import Job
+from rift.data.models.job_execution import JobExecution
 from rift.data.models.tenant import Tenant
 from rift.data.models.target import Target
 from rift.data.models.schedule import Schedule
+from rift.clients.ssh import SSHClient, SSHKeyCredentials
 from rift.actions import execute_job
 
 
@@ -61,8 +66,15 @@ class JobResource(ApiResource):
 
     def on_head(self, req, resp, tenant_id, job_id):
         job = Job.get_job(job_id)
+        job_ex = JobExecution.build_job_from_dict(job.as_dict())
+
         if job:
             # TODO(jmv): Figure out scheduling of jobs
+            JobExecution.save_job(job_ex)
+            job.run_numbers.append(job_ex.run_number)
+            Job.update_job(job)
+            job = Job.get_job(job_id)
+
             execute_job.delay(job.id)
             resp.status = falcon.HTTP_200
         else:
@@ -72,6 +84,19 @@ class JobResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, job_id):
         Job.delete_job(job_id=job_id)
+
+
+class JobExecutionResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, job_id, run_number):
+        job_execution = JobExecution.get_job(run_number)
+        JobExecution.save_job(job_execution)
+        if job_execution:
+            resp.body = self.format_response_body(job_execution.as_dict())
+        else:
+            msg = 'Cannot find run number: {id}'.format(id=run_number)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
 
 
 class TenantsResource(ApiResource):
@@ -152,6 +177,55 @@ class TargetResource(ApiResource):
 
     def on_delete(self, req, resp, tenant_id, target_id):
         Target.delete_target(target_id=target_id)
+
+
+class PingTargetResource(ApiResource):
+
+    def on_get(self, req, resp, tenant_id, target_id):
+        target = Target.get_target(tenant_id, target_id)
+        if target:
+            address = target.address
+            # Nova
+            if 'nova' in address.as_dict().keys():
+                nova_address = address.address_child
+
+                auth = target.authentication
+                try:
+                    if 'rackspace' in auth:
+                        cls = get_driver(Provider.RACKSPACE)
+                        cls(auth['rackspace']['username'],
+                            auth['rackspace']['api_key'],
+                            region=nova_address.region.lower())
+                        resp.status = falcon.HTTP_200
+                    else:
+                        raise Exception("No supported providers in target: {0}"
+                                        .format(target.as_dict()))
+                except Exception:
+                    resp.status = falcon.HTTP_404
+            # SSH
+            else:
+                ip = address.address_child
+                ssh = target.authentication.get('ssh')
+
+                creds = SSHKeyCredentials(
+                    username=ssh.get('username'),
+                    key_contents=ssh.get('private_key')
+                )
+                client = SSHClient(
+                    host=ip.address,
+                    port=ip.port,
+                    credentials=creds
+                )
+                try:
+                    client.connect()
+                    resp.status = falcon.HTTP_200
+                    client.close()
+                except SSHException:
+                    resp.status = falcon.HTTP_404
+        else:
+            msg = 'Cannot find target: {target_id}'.format(target_id=target_id)
+            resp.status = falcon.HTTP_404
+            resp.body = json.dumps({'description': msg})
 
 
 class SchedulesResource(ApiResource):

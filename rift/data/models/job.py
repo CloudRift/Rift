@@ -7,9 +7,13 @@ JOB_COLLECTION = "jobs"
 
 
 class Job(object):
-    def __init__(self, tenant_id, job_id, name, actions):
+    def __init__(self, tenant_id, job_id, name, actions, run_numbers=None):
         self.tenant_id = tenant_id
         self.name = name
+        if run_numbers is None:
+            self.run_numbers = list()
+        else:
+            self.run_numbers = run_numbers
         self.actions = actions
         self.id = job_id
 
@@ -17,7 +21,8 @@ class Job(object):
         return {
             "id": self.id,
             "name": self.name,
-            "actions": [action.as_dict() for action in self.actions]
+            "actions": [action.as_dict() for action in self.actions],
+            "run_numbers": self.run_numbers,
         }
 
     def summary_dict(self):
@@ -36,7 +41,8 @@ class Job(object):
             'tenant_id': job_dict.get("tenant_id"),
             'job_id': job_dict.get("id", str(uuid.uuid4())),
             'name': job_dict.get("name"),
-            'actions': actions
+            'actions': actions,
+            'run_numbers': job_dict.get("run_numbers")
         }
 
         return Job(**kwargs)

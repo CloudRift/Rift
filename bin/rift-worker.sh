@@ -1,24 +1,29 @@
 #!/bin/bash
 
-start_worker()
+start_containers()
 {
-    gunicorn -b '127.0.0.1:8001' rift.api.worker.app:application &
-    celery worker -A rift.api.worker.app
+  docker build -t rift .
+  docker run --name rift-worker --link rift-db:db --link rift-mq:mq -p 127.0.0.1:8001:8001 -d rift \
+  su -m rift-worker -c "gunicorn -b '0.0.0.0:8001' rift.api.worker.app:application & celery worker -A rift.api.worker.app"
 }
-
-stop_worker()
+stop_containers()
 {
-    pkill gunicorn
+  docker kill rift-worker
+  docker rm rift-worker
 }
 
 case "$1" in
   start)
-    start_worker
+    start_containers
     ;;
   stop)
-    stop_worker
+    stop_containers
+    ;;
+  restart)
+    stop_containers
+    start_containers
     ;;
   *)
-    echo "Usage: rift-worker.sh {start|stop}"
+    echo "Usage: rift-worker.sh {start|stop|restart}"
     exit 1
 esac
